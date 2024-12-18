@@ -172,7 +172,7 @@ const Home = () => {
         <Products mockCategories={mockCategories}/>
       </div>
       <div
-        class="rounded-lg  h-96 mb-4"
+        class="rounded-lg  h-full"
       >
         <Footer/>
       </div>

@@ -225,7 +225,7 @@ const Products = ({mockCategories}) => {
     }
 ];  
   return (
-    <section class="bg-gray-50  antialiased dark:bg-gray-900 ">
+    <section class="bg-white  antialiased dark:bg-gray-900 ">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     {/* <!-- Heading & Filters --> */}
     <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">

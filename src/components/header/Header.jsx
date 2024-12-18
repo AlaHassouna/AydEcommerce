@@ -329,13 +329,13 @@ const Header = () => {
               <ul className="flex flex-col  font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                 {["Home", "Nouveautés", "Promotion", "Gift card", "Contact"].map((item, index) => (
                   <li key={index} className="mt-2 lg:mt-0">
-                    <a
+                    <Link
                       href="#"
                       title=""
                       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
                     >
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
                 
