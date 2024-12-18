@@ -36,7 +36,7 @@ const ProductCart = ({ products }) => {
   };
 
   return (
-    <div className="relative mb-4">
+    <div className="relative mb-4 ">
       {/* Boutons de contrôle sur les côtés */}
       <button
         onClick={() => sliderRef.current.slickPrev()} // Appel de la méthode précédente

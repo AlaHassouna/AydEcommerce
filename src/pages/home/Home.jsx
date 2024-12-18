@@ -3,6 +3,9 @@ import Carousel from '../../components/carousel/Carousel'
 import BestSellers from '../../components/bestSellers/BestSellers'
 import Hotproduct from '../../components/hotProduct/Hotproduct'
 import Cateogries from '../../components/categories/Cateogries'
+import CategorySearch from '../../components/categorySearch/CategorySearch'
+import Products from '../../components/products/Products'
+import Footer from '../../components/footer/Footer'
 
 
 
@@ -65,7 +68,14 @@ const Home = () => {
       CreatedAt: "15 Dec 2024", // Updated the creation date
     },
   ];
-  
+  const mockCategories = [
+    { id: 1, Name: 'T-Shirts', Icon: 'https://cdn-icons-png.flaticon.com/512/79/79693.png' },
+    { id: 2, Name: 'Jeans', Icon: 'https://cdn-icons-png.flaticon.com/512/664/664466.png' },
+    { id: 3, Name: 'Shoes', Icon: 'https://cdn-icons-png.flaticon.com/512/6000/6000380.png' },
+    { id: 4, Name: 'Jackets', Icon: 'https://cdn-icons-png.flaticon.com/512/3531/3531671.png' },
+    { id: 5, Name: 'Accessories', Icon: 'https://cdn-icons-png.flaticon.com/512/7695/7695937.png' },
+    { id: 6, Name: 'Hats', Icon: 'https://cdn-icons-png.flaticon.com/512/864/864744.png' },
+  ];
   return (
     // <div>
       
@@ -81,7 +91,7 @@ const Home = () => {
           {/* Image Section */}
           <div className="flex justify-center items-center rounded-lg dark:border-gray-600 h-[300px] sm:h-[400px] lg:h-full w-full">
             <img
-              src="https://images.pexels.com/photos/1721558/pexels-photo-1721558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              src="https://images.pexels.com/photos/1721558/pexels-photo-1721558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
               className="rounded-lg max-h-full w-full object-cover"
               alt=""
             />
@@ -89,7 +99,7 @@ const Home = () => {
           {/* Content Section */}
           <div className="rounded-lg col-span-3 h-full">
             {/* Header Section */}
-            <div className="flex justify-between items-center mb-4 flex-wrap">
+            <div className="flex justify-between items-center mb-4 md:mt-4 flex-wrap">
               <div>
                 <h1 className="block mb-0 font-medium text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
                   Meilleures ventes
@@ -130,37 +140,43 @@ const Home = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-  <div className="rounded-lg border-gray-300 dark:border-gray-600 h-[300px] sm:h-[400px] lg:h-[300px] md:order-1">
-    <img
-      src="https://images.pexels.com/photos/3963101/pexels-photo-3963101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-      alt=""
-      className="rounded-lg h-auto w-full md:h-[475px]"
-    />
-  </div>
-  <div className="rounded-lg h-full md:h-full md:col-span-3 md:order-2">
-    <Hotproduct hotProduct={hotProduct} />
-  </div>
-</div>
-
+        <div className="rounded-lg border-gray-300 dark:border-gray-600 h-[300px] sm:h-[400px] lg:h-[300px] md:order-1">
+          <img
+            src="https://images.pexels.com/photos/3963101/pexels-photo-3963101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt=""
+            className="rounded-lg h-auto w-full md:h-[475px]"
+          />
+        </div>
+        <div className="rounded-lg h-full md:h-full md:col-span-3 md:order-2">
+          <Hotproduct hotProduct={hotProduct} />
+        </div>
+      </div>
+      
       <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
+        class="rounded-lg h-full mb-4"
       >
-
-        <Cateogries/>
+        <CategorySearch mockCategories={mockCategories}/>
+        {/* <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+          <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+          </svg>
+          <span class="sr-only">Info</span>
+          <div>
+            <span class="font-medium">Super réduction!</span>  pour votre premier achat.
+          </div>
+        </div> */}
       </div>
       <div
-        class="rounded-lg  h-full mb-4"
+        class="rounded-lg border-gray-300 dark:border-gray-600 h-full mb-4"
       >
+        <Products mockCategories={mockCategories}/>
       </div>
-      <div class="grid grid-cols-4 gap-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72 col-span-3"
-        ></div>
-        
+      <div
+        class="rounded-lg  h-96 mb-4"
+      >
+        <Footer/>
       </div>
+      
     </main>
   )
 }
