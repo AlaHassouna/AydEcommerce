@@ -1,8 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Rating from './rating/Rating';
 import { useLocation } from 'react-router-dom';
 
 const Product = () => {
+  useEffect(() => {
+    // Se déplace en haut de la page lorsque le composant est monté
+    window.scrollTo(0, 0);
+  }, []);
   const location = useLocation();
   const product = location.state?.product;
   console.log(product)
@@ -162,8 +166,10 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                                 {product.Price.toFixed(2)}
                                 <span className="ml-1 text-xs">Dt</span>
                                  </h5>
+                                 {product.OldPrice > product.Price && (
                                 <span class="ml-3 font-semibold text-lg text-[#c5274c]">{Math.round(((product.OldPrice - product.Price) * 100) / product.OldPrice)}% réduction</span>
-                            </div>
+                                 )}
+                                </div>
                             <svg class="mx-5 max-[400px]:hidden" xmlns="http://www.w3.org/2000/svg" width="2"
                                 height="36" viewBox="0 0 2 36" fill="none">
                                 <path d="M1 0V36" stroke="#E5E7EB" />

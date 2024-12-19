@@ -991,7 +991,6 @@ const Products = ({mockCategories}) => {
     </div>
     <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
     {products.map((product) => (
-      <Link to={`/products/${product.UID}`} state={{ product }}>
           <div
             key={product.UID}
             className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
@@ -1014,6 +1013,8 @@ const Products = ({mockCategories}) => {
                   </span>
                 )}
                 <div class="flex items-center justify-end gap-1">
+              <Link to={`/products/${product.UID}`} state={{ product }}>
+
               <button type="button" data-tooltip-target="tooltip-quick-look-5" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 <span class="sr-only"> Quick look </span>
                 <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -1021,11 +1022,12 @@ const Products = ({mockCategories}) => {
                   <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
               </button>
-              <div id="tooltip-quick-look-5" role="tooltip" class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700" data-popper-placement="top">
-                Quick look
-                <div class="tooltip-arrow" data-popper-arrow=""></div>
-              </div>
 
+                <div id="tooltip-quick-look-5" role="tooltip" class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700" data-popper-placement="top">
+                  Quick look
+                  <div class="tooltip-arrow" data-popper-arrow=""></div>
+                </div>
+                </Link>
               <button type="button" data-tooltip-target="tooltip-add-to-favorites-5" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 <span class="sr-only"> Add to Favorites </span>
                 <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1115,7 +1117,6 @@ const Products = ({mockCategories}) => {
               </div>
             </div>
           </div>
-      </Link>
         ))}
       
       
