@@ -7,7 +7,7 @@ const Header = () => {
   const [cart, setCart] = useState(false);
   const [account, setAccount] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [allCategories, setAllCategories] = useState(true);
+  const [allCategories, setAllCategories] = useState(false);
   const [login, setLogin] = useState(false);
   const [openCategory, setOpenCategory] = useState(null);
   

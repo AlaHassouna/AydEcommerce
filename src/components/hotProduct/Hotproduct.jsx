@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Hotproduct = ({ hotProduct }) => {
   const product = hotProduct[0];
@@ -34,7 +35,7 @@ const Hotproduct = ({ hotProduct }) => {
   return (
    
 
-
+<Link to={`/products/${product.UID}`} state={{ product }}>
 <section className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl">
   <div className="grid max-w-screen-xl px-4 sm:px-8 md:px-12 lg:px-20 py-8 sm:py-12 mx-auto md:gap-4 lg:gap-8 grid-cols-1 md:grid-cols-12">
     {/* Texte */}
@@ -102,6 +103,7 @@ const Hotproduct = ({ hotProduct }) => {
     </div>
   </div>
 </section>
+</Link>
   );
 };
 
