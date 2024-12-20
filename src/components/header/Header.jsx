@@ -1,16 +1,39 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import logo from '../../assets/images/logo1.png';
 import logoWhite from '../../assets/images/logowhite.png';
 import { Link } from 'react-router-dom';
+import { MyContext } from '../../App';
+
 
 const Header = () => {
+  const context= useContext(MyContext)
+  const { panier } = useContext(MyContext);
+  // console.log("panier ",panier)
+  // console.log("panier.length ",panier.length)
   const [cart, setCart] = useState(false);
   const [account, setAccount] = useState(false);
   const [menu, setMenu] = useState(false);
   const [allCategories, setAllCategories] = useState(false);
-  const [login, setLogin] = useState(false);
+  // const [login, setLogin] = useState(false);
   const [openCategory, setOpenCategory] = useState(null);
-  
+  const [showModal, setShowModal] = useState(false);
+  const [itemIndex, setItemIndex] = useState(null);
+
+  const handleOpenModal = (event, index) => {
+    event.stopPropagation();
+    setItemIndex(index); // Stocke l'index de l'article
+    setShowModal(true);  // Affiche le modal
+  };
+
+  const handleAccept = () => {
+    context.setPanier((prev) => prev.filter((_, idx) => idx !== itemIndex));
+    setShowModal(false); // Ferme le modal
+    setItemIndex(null);  // Réinitialise l'index
+  };
+
+  const handleDecline = () => {
+    setShowModal(false); // Ferme le modal sans suppression
+  };
   const Categories = [
     { name: "Vêtements Hommes", subcategories: ["T-shirts", "Chemises", "Vestes"] },
     { name: "Vêtements Femmes", subcategories: ["Robes", "Blouses"] },
@@ -33,6 +56,7 @@ const Header = () => {
   };
   const toggleCategory = (index) => {
     setOpenCategory(openCategory === index ? null : index);
+    
   };  
   return (
    
@@ -49,8 +73,13 @@ const Header = () => {
                       />
             </Link>
             <div class="flex items-center lg:order-2">
-              {login !==true? (<><a href="#" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-1 focus:ring-gray-300 font-medium rounded-lg text-sm  lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Connexion</a>
-                <a href="#" class="rounded-3xl text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-4 focus:ring-[#011d28e6] font-medium text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Commencer</a>
+              {context.isLogin !==true? (<>
+              <Link to="/login" class="p-2 text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-1 focus:ring-gray-300 font-medium rounded-lg text-sm  lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">
+              Connexion
+              </Link>
+                <Link to="/register" class="rounded-3xl text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-4 focus:ring-[#011d28e6] font-medium text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                Commencer
+                </Link>
                 </>):<div className="relative ">
                  <button id="userDropdownButton1" data-dropdown-toggle="userDropdown1" 
                  type="button" class="inline-flex items-center rounded-lg justify-center p-2 
@@ -72,7 +101,7 @@ const Header = () => {
                    </ul>
                
                    <div class="p-2 text-sm font-medium text-gray-900 dark:text-white">
-                     <a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </a>
+                     <button onClick={()=>context.setIsLogin(!context.isLogin)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
                    </div>
                  </div>
                }
@@ -196,101 +225,178 @@ const Header = () => {
                             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"/>
                             </svg>
-
-                            <span class="sr-only">Notifications</span>
-                              <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-[#011d28] border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">3</div>
+                            {panier.length>0 &&(
+                            
+                              <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white 
+                              bg-[#011d28] border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                                {panier.length}
                                 
+                                </div>
+                                )
+                             }   
                       </button>
-                      {cart &&
-                      <div id="myCartDropdown1" class="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800 ">
-                        <div class="grid grid-cols-2">
-                          <div>
-                          <div class="flex items-center gap-2">
-                                  <a href="#" class="flex items-center aspect-square w-10 h-10 shrink-0">
-                                    <img class="h-auto w-full max-h-full dark:hidden" src="https://mms-images-prod.imgix.net/mms/images/catalog/6a62c76ef0978853a20391b6c32da4fe/colors/176100/views/alt/front_medium_extended.png?dpr=1.2&auto=format&nrs=0&w=320" alt="imac image" />
-                                    <img class="hidden h-auto w-full max-h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
-                                  </a>
-                                  <a href="#" class="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline">T-shirt</a>
+                        {cart &&
+                        <div>
+                        {panier && panier.length > 0 ? (
+                          <div
+                            id="myCartDropdown1"
+                            className="right-0 divide-y divide-gray-100 overflow-y-auto absolute z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800"
+                          >
+                            {panier.map((item, index) => (
+                              <div className="grid grid-cols-2" key={item.UID || index}>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <a
+                                      href="#"
+                                      className="flex items-center aspect-square w-10 h-10 shrink-0"
+                                    >
+                                      <img
+                                        className="h-auto w-full max-h-full"
+                                        src={item.image} // Affiche la première image du produit
+                                        alt={item.Product}
+                                      />
+                                    </a>
+                                    <div className="flex flex-col">
+  {/* Nom du produit */}
+  <a
+    href="#"
+    className="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline"
+  >
+    {item.Product}
+  </a>
+  
+  {/* Taille et couleur */}
+  <div className="mt-1">
+    <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
+      Taille : {item.size}
+    </p>
+    <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
+      Couleur : {item.color}
+    </p>
+  </div>
+  
+</div>
+                                    </div>
+                                    <p className="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">
+                                      {item.Price.toFixed(2)}
+                                    </p>
+                                  </div>
+                    
+                                  <div className="flex items-center justify-end gap-6">
+                                    <p className="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">
+                                      Qty: {item.quantity }
+                                    </p>
+                  
+                                  <div>
+                                        {/* Bouton pour ouvrir le modal */}
+                                        <button
+                                          type="button"
+                                          className="text-[#551121] hover:text-red-700 dark:text-red-500 dark:hover:text-red-600"
+                                          onClick={(event) => handleOpenModal(event, index)}
+                                        >
+                                          <svg
+                                            className="h-4 w-4"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              fillRule="evenodd"
+                                              d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z"
+                                              clipRule="evenodd"
+                                            />
+                                          </svg>
+                                        </button>
+
+                                        {/* Modal */}
+                                        {showModal && (
+                                          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                                              {/* Header */}
+                                              <div className="flex items-center justify-between">
+                                                <h2 className="text-lg font-semibold text-gray-800">
+                                                  Confirmation de suppression
+                                                </h2>
+                                                <button
+                                                  onClick={handleDecline}
+                                                  className="text-gray-400 hover:text-gray-600"
+                                                >
+                                                  <svg
+                                                    className="w-4 h-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                  >
+                                                    <path
+                                                      strokeLinecap="round"
+                                                      strokeLinejoin="round"
+                                                      strokeWidth={2}
+                                                      d="M6 18L18 6M6 6l12 12"
+                                                    />
+                                                  </svg>
+                                                </button>
+                                              </div>
+
+                                              {/* Body */}
+                                              <div className="mt-4">
+                                                <p className="text-sm text-gray-600">
+                                                  Êtes-vous sûr de vouloir supprimer cet article ? Cette action
+                                                  est irréversible.
+                                                </p>
+                                              </div>
+
+                                              {/* Footer */}
+                                              <div className="mt-6 flex justify-end space-x-2">
+                                                <button
+                                                  onClick={handleDecline}
+                                                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                                                >
+                                                  Annuler
+                                                </button>
+                                                <button
+                                                  onClick={handleAccept}
+                                                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                                >
+                                                  I accept
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+
                                 </div>
-                            <p class="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">$599</p>
+                              </div>
+                            ))}
+                  
+                            <a
+                              href="#"
+                              title=""
+                              className="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg bg-[#011d28] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#011d28e6] focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                              role="button"
+                            >
+                              Proceed to Checkout
+                            </a>
                           </div>
-                    
-                          <div class="flex items-center justify-end gap-6">
-                            <p class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">Qty: 1</p>
-                    
-                            <button data-tooltip-target="tooltipRemoveItem1a" type="button" class="text-[#551121] hover:text-red-700 dark:text-red-500 dark:hover:text-red-600">
-                              <span class="sr-only"> Remove </span>
-                              <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z" clip-rule="evenodd" />
-                              </svg>
-                            </button>
-                            <div id="tooltipRemoveItem1a" role="tooltip" class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
-                              Remove item
-                              <div class="tooltip-arrow" data-popper-arrow></div>
+                        ) : (
+                          
+                            <div id="myCartDropdown1" class="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800 ">
+                              
+                              
+                          
+                          
+                              
+                          
+                              <p href="#" title="" class="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg text-[#011d28] px-5 py-2.5 text-sm font-medium  dark:text-white" > 
+                              Votre panier est vide.
+                                </p>
                             </div>
-                          </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                          <div>
-                          <div class="flex items-center gap-2">
-                                  <a href="#" class="flex items-center aspect-square w-10 h-10 shrink-0">
-                                    <img class="h-auto w-full max-h-full dark:hidden" src="https://www.wibra.fr/wp-content/uploads/sites/5/2023/07/06932687-000-01.png" alt="imac image" />
-                                    <img class="hidden h-auto w-full max-h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
-                                  </a>
-                                  <a href="#" class="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline">Jeans</a>
-                                </div>
-                            <p class="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">$599</p>
-                          </div>
-                    
-                          <div class="flex items-center justify-end gap-6">
-                            <p class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">Qty: 1</p>
-                    
-                            <button data-tooltip-target="tooltipRemoveItem1a" type="button" class="text-[#551121] hover:text-red-700 dark:text-red-500 dark:hover:text-red-600">
-                              <span class="sr-only"> Remove </span>
-                              <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z" clip-rule="evenodd" />
-                              </svg>
-                            </button>
-                            <div id="tooltipRemoveItem1a" role="tooltip" class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
-                              Remove item
-                              <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                          <div>
-                          <div class="flex items-center gap-2">
-                                  <a href="#" class="flex items-center aspect-square w-10 h-10 shrink-0">
-                                    <img class="h-auto w-full max-h-full dark:hidden" src="https://mms-images-prod.imgix.net/mms/images/catalog/6a62c76ef0978853a20391b6c32da4fe/colors/176100/views/alt/front_medium_extended.png?dpr=1.2&auto=format&nrs=0&w=320" alt="imac image" />
-                                    <img class="hidden h-auto w-full max-h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
-                                  </a>
-                                  <a href="#" class="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline">Jacket</a>
-                                </div>
-                            <p class="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">89.99</p>
-                          </div>
-                    
-                          <div class="flex items-center justify-end gap-6">
-                            <p class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">Qty: 1</p>
-                    
-                            <button data-tooltip-target="tooltipRemoveItem1a" type="button" class="text-[#551121] hover:text-red-700 dark:text-red-500 dark:hover:text-red-600">
-                              <span class="sr-only"> Remove </span>
-                              <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z" clip-rule="evenodd" />
-                              </svg>
-                            </button>
-                            <div id="tooltipRemoveItem1a" role="tooltip" class="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
-                              Remove item
-                              <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                          </div>
-                        </div>
-                    
-                    
-                        
-                    
-                        <a href="#" title="" class="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg bg-[#011d28] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#011d28e6] focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" role="button"> Proceed to Checkout </a>
+                            
+                        )}
                       </div>
-                      }
+                        }
                       </div>
                       <button data-collapse-toggle="mobile-menu-2" type="button" 
                 class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden 
@@ -326,20 +432,54 @@ const Header = () => {
                       
                     </div>
                 </div>
-              <ul className="flex flex-col  font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-                {["Home", "Nouveautés", "Promotion", "Gift card", "Contact"].map((item, index) => (
-                  <li key={index} className="mt-2 lg:mt-0">
-                    <Link
-                      href="#"
-                      title=""
-                      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-                
-              </ul>
+                <ul className="flex flex-col justify-between space-y-2 font-medium lg:flex-row lg:space-x-8 lg:space-y-0 lg:mt-0">
+  <li className="mt-2 lg:mt-0">
+    <Link
+      to="/"
+      title="Home"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Home
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
+      href="#"
+      title="Nouveautés"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Nouveautés
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
+      href="#"
+      title="Promotion"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Promotion
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
+      href="#"
+      title="Gift card"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Gift card
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
+      href="#"
+      title="Contact"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Contact
+    </Link>
+  </li>
+</ul>
+
               
               
             </div>

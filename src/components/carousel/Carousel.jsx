@@ -32,7 +32,7 @@ const Carousel = () => {
   };
 
   return (
-    <div id="default-carousel" className="relative w-full">
+    <div id="default-carousel" className="relative w-full" onClick={(event) => event.stopPropagation()}>
       {/* Carousel wrapper */}
       <div className="relative h-[700px] overflow-hidden rounded-lg rounded-t-none md:h-[700px]">
             {slides.map((slide, index) => (

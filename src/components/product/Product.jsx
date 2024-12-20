@@ -1,9 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Rating from './rating/Rating';
 import { useLocation } from 'react-router-dom';
+import { MyContext } from '../../App';
+// onClick={context.addToCart(product,selectedSize,selectedColor)}
 
 const Product = () => {
+  const { addToCart } = useContext(MyContext);
+
+  const handleAddToCart = () => {
+    // console.log("product ",product)
+    const cartItem = {
+      id: product.UID,
+      name: product.Product,
+      price: product.Price,
+      image: selectedImage, // Ajout de l'image sélectionnée
+      size: selectedSize,
+      color: selectedColor,
+      quantity: quantity,
+    };
+    // console.log("cartItem ",cartItem)
+
+    addToCart(cartItem); // Appel de la méthode addToCart avec l'élément du panier
+  };
   useEffect(() => {
+    
     // Se déplace en haut de la page lorsque le composant est monté
     window.scrollTo(0, 0);
   }, []);
@@ -277,6 +297,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
       </button>
     </div>
                             <button
+                            onClick={handleAddToCart}
                                 class="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
                                 <svg class="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"
                                     width="22" height="22" viewBox="0 0 22 22" fill="none"
