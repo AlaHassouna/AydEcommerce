@@ -6,7 +6,7 @@ const Checkout = () => {
       const { panier } = useContext(MyContext);
       console.log("panier ",panier)
       console.log("panier.length ",panier.length)
-    const [showModal, setShowModal] = useState(true);
+    const [showModal, setShowModal] = useState(false);
     const [gouvernoratModal, setGouvernoratModal] = useState(false);
     const [selectedGouvernorat, setSelectedGouvernorat] = useState("");
     // Liste des gouvernorats

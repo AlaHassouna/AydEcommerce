@@ -5,7 +5,7 @@ import { MyContext } from '../../App';
 // onClick={context.addToCart(product,selectedSize,selectedColor)}
 import { useParams } from 'react-router-dom'; 
 
-import axios from 'axios';
+// import axios from 'axios';
 
 
 const Product = () => {

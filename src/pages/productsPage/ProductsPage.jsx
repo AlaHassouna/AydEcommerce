@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Products from '../../components/products/Products';
-import axios from 'axios';
+// import axios from 'axios';
 
 // import Products 
 const ProductsPage = () => {

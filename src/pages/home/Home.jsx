@@ -6,7 +6,7 @@ import Cateogries from '../../components/categories/Cateogries'
 import CategorySearch from '../../components/categorySearch/CategorySearch'
 import Products from '../../components/products/Products'
 import Footer from '../../components/footer/Footer'
-import axios from 'axios';
+// import axios from 'axios';
 
 
 

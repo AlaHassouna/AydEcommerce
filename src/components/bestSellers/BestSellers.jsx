@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ProductCart from './ProductCart';
-import axios from 'axios';
+// import axios from 'axios';
 
 
    const BestSellers = ({nbslidesToShow,products}) => {
