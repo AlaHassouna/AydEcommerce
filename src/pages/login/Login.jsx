@@ -1,10 +1,68 @@
-import React from 'react'
+
+import React, { useContext, useEffect, useState } from 'react'
 import logo from '../../assets/images/logo1.png';
 import { Link } from 'react-router-dom';
+import { MyContext } from '../../App';
 
 const Login = () => {
+  const context= useContext(MyContext)
+  const [errorMessage, setErrorMessage] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [response, setResponse] = useState(null);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const hashedPassword = await bcrypt.hash(formData.password, 10); // Hash du mot de passe
+    const loginData = {
+      username: formData.email,
+      password: formData.password
+    };
+    console.log(loginData)
+    try {
+      const res = await fetch('https://localhost:7057/api/Account/Login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setResponse(data);
+        console.log('Login successful:', data);
+        // if(data.isAdmin=="true"){
+        context.setUser(data)
+        context.setIsLogin(true)
+        localStorage.setItem("isLoggedIn", "true"); 
+        localStorage.setItem("user", JSON.stringify(data));
+        console.log("context.user ",context.user)
+      // }
+        // navigate('/dashboard');
+      } else {
+        setErrorMessage(true)
+        console.error('Login failed:', res.status);
+      }
+    } catch (error) {
+      
+      console.error('Error:', error);
+    }
+  };
+ // Log context.user whenever it changes
+// useEffect(() => {
+//   console.log("Updated context.user:", context.user);
+// }, [context.user]);
   return (
     <section class="flex items-center justify-center ">
+
         <div class="lg:mx-10  w-full  flex flex-col items-center justify-center px-6 py-8 mx-auto lg:h-screen lg:py-0">
             {/* <a href="#" class="flex items-center text-2xl font-semibold text-gray-900 dark:text-white ">
                 <img class="w-20 h-20 mr-2" src={logo} alt="logo"/>
@@ -15,15 +73,32 @@ const Login = () => {
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Se connecter à votre compte
                     </h1>
-                    <form class="space-y-4 md:space-y-6" action="#">
+                    <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">E-mail</label>
-                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required=""/>
+                            <input type="email" name="email" id="email" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 
+                            focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            placeholder="name@company.com" required
+                            
+                            value={formData.email}
+                            onChange={handleChange}
+                            />
                         </div>
-                        <div>
+                        <div >
                             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mot de passe</label>
-                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
+                            <input type="password" name="password" id="password" placeholder="••••••••" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 
+                            focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            required
+                            value={formData.password}
+                            onChange={handleChange}/>
                         </div>
+                        {errorMessage && 
+                        <label for="remember" class="text-[#551121] text-xs  dark:text-gray-300">Erreur de connexion : Vérifiez votre email et votre mot de passe.</label>
+                                  }
                         <div class="flex items-center justify-between">
                             <div class="flex items-start">
                                 <div class="flex items-center h-5">
@@ -64,4 +139,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login  

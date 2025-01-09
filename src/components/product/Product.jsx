@@ -3,21 +3,74 @@ import Rating from './rating/Rating';
 import { useLocation } from 'react-router-dom';
 import { MyContext } from '../../App';
 // onClick={context.addToCart(product,selectedSize,selectedColor)}
+import { useParams } from 'react-router-dom'; 
+
+import axios from 'axios';
+
 
 const Product = () => {
   const { addToCart } = useContext(MyContext);
+  const { id } = useParams();// Récupère l'ID depuis l'URL
+  // const [product, setProduct] = useState(); // État pour les données du produit
+  const [loading, setLoading] = useState(true); // État pour le chargement
+  const [error, setError] = useState(null); // État pour les erreurs
+//   useEffect(() => {
+//     const fetchProduct = async () => {
+//         try {
+//             const response = await axios.get(`https://localhost:7057/api/Products/${id}`, {
+//                 headers: {
+//                     accept: 'application/json', // Specify the content type expected from the API
+//                 },
+//             });
+//             console.log("response.data", response.data);
+//             setProduct(response.data); // Store the data in the state
+//         } catch (error) {
+//             setError(error.message); // Handle errors
+//         }
+//     };
 
+//     fetchProduct(); // Call the async function
+// }, [id]); // Dependency array ensures the effect runs when `id` changes
+
+const location = useLocation();
+const product = location.state?.product;
+console.log("product",product)
+
+const [quantity, setQuantity] = useState(1);
+const [selectedColor, setSelectedColor] = useState(null);
+const [selectedSize, setSelectedSize] = useState(null);
+// Ajoutez un état pour l'image sélectionnée
+const [selectedImage, setSelectedImage] = useState(null);
+useEffect(() => {
+  console.log("selectedColor ",selectedColor )
+  // Se déplace en haut de la page lorsque le composant est monté
+
+}, [selectedColor]);
+useEffect(() => {
+// Assurez-vous que product est défini avant d'accéder aux propriétés
+if (product && product.Image && product.Image.length > 0) {
+  setSelectedImage(product.Image[0]);
+}
+
+// Vérifiez également les propriétés pour éviter des erreurs si product ou variants n'est pas défini
+if (product && product.Variants && product.Variants.length > 0) {
+  setSelectedColor(product.Variants[0]?.Colors[0]?.Color);
+  setSelectedSize(product.Variants[0]?.Size);
+}
+}, [product]);
+console.log("product ",product)
   const handleAddToCart = () => {
     // console.log("product ",product)
     const cartItem = {
-      id: product.UID,
-      name: product.Product,
-      price: product.Price,
+      id: product?.UID,
+      name: product?.Product,
+      price: product?.Price,
       image: selectedImage, // Ajout de l'image sélectionnée
       size: selectedSize,
       color: selectedColor,
       quantity: quantity,
-    };
+      OldPrice: product?.OldPrice,
+        };
     // console.log("cartItem ",cartItem)
 
     addToCart(cartItem); // Appel de la méthode addToCart avec l'élément du panier
@@ -27,72 +80,12 @@ const Product = () => {
     // Se déplace en haut de la page lorsque le composant est monté
     window.scrollTo(0, 0);
   }, []);
-  const location = useLocation();
-  const product = location.state?.product;
-  console.log(product)
-  // const product = 
-  //   {
-  //     UID: "C001",
-  //     Product: "T-shirt",
-  //     Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-  //     Category: "Tops",
-  //     SubCategory: "Casual Wear",
-  //     Brand: "AYD",
-  //     OldPrice: 35.00,
-  //     Price: 19.99,
-  //     Stock: 100,
-  //     Rating: 4.3,
-  //     Order: 200,
-  //     Sales: 3000,
-  //     IsFeatured:true,
-  //     Image: ["https://timshop.timhortons.ca/cdn/shop/files/693770626664_TShirtIconWhite_Front.png?v=1714573840&width=2048",
-  //       "https://cms.cloudinary.vpsvc.com/images/c_scale,dpr_auto,f_auto,q_auto:best,t_productPageHeroGalleryTransformation_v2,w_auto/legacy_dam/en-nz/S001463520/PPAGK-254-kids-Tshirt-marquee-001?cb=c7d589026f2c77059bcbd4f875f3dcf0b1a73a0c",
-  //       "https://www.exist.com.tn/95266-large_default/t-shirt.jpg"],
-  //     Tags: ["Suite", "Party", "Dress", "Smart", "Man", "Styles"],
-  //     Variants: [
-  //       {
-  //         Size: "S",
-  //         Colors: [
-  //           { Color: "Red", Quantity: 10 },
-  //           { Color: "Blue", Quantity: 15 },
-  //           { Color: "Green", Quantity: 5 },
-  //         ],
-  //       },
-  //       {
-  //         Size: "M",
-  //         Colors: [
-  //           { Color: "Red", Quantity: 8 },
-  //           { Color: "Yellow", Quantity: 12 },
-  //           { Color: "Purple", Quantity: 7 },
-  //         ],
-  //       },
-  //       {
-  //         Size: "L",
-  //         Colors: [
-  //           { Color: "Blue", Quantity: 20 },
-  //           { Color: "Green", Quantity: 10 },
-  //           { Color: "Purple", Quantity: 9 },
-  //         ],
-  //       },
-  //       {
-  //         Size: "XL",
-  //         Colors: [
-  //           { Color: "Red", Quantity: 5 },
-  //           { Color: "Yellow", Quantity: 8 },
-  //           { Color: "Purple", Quantity: 6 },
-  //         ],
-  //       },
-  //     ],
-  //     CreatedAt:"02 Feb 2024"
-  //   };
-  const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState(product.Variants[0].Colors[0].Color);
-  const [selectedSize, setSelectedSize] = useState(product.Variants[0].Size);
-// Ajoutez un état pour l'image sélectionnée
-const [selectedImage, setSelectedImage] = useState(product.Image[0]);
+
+  
+
   // Fonction pour trouver la quantité maximale pour la couleur et la taille sélectionnées
   const getMaxQuantity = () => {
-    const variant = product.Variants.find((v) => v.Size === selectedSize);
+    const variant = product?.Variants.find((v) => v.Size === selectedSize);
     const colorVariant = variant?.Colors.find((c) => c.Color === selectedColor);
     return colorVariant ? colorVariant.Quantity : 0;
   };
@@ -120,9 +113,36 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
   };
    // Trouver les couleurs disponibles pour la taille sélectionnée
    const colorsForSelectedSize = selectedSize
-   ? product.Variants.find((variant) => variant.Size === selectedSize)?.Colors || []
+   ? product?.Variants.find((variant) => variant.Size === selectedSize)?.Colors || []
    : [];
+   const [zoomStyle, setZoomStyle] = useState({
+    backgroundPosition: 'center',
+    backgroundSize: '80%', // Taille du zoom
+  });
 
+  // Fonction pour gérer le zoom basé sur la position du curseur
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+
+    // Calcul de la position du fond pour zoomer au niveau du curseur
+    const xPercent = (x / width) * 100;
+    const yPercent = (y / height) * 100;
+
+    setZoomStyle({
+      backgroundPosition: `${xPercent}% ${yPercent}%`,
+      backgroundSize: '200%', // Zoom sur l'image
+    });
+  };
+
+  // Réinitialiser le zoom lorsque la souris quitte l'image
+  const handleMouseLeave = () => {
+    setZoomStyle({
+      backgroundPosition: 'center',
+      backgroundSize: '80%', // Retour à la taille normale
+    });
+  };
   return (
     <div class="font-sans bg-white">
             <div class="p-4 lg:max-w-7xl max-w-4xl mx-auto">
@@ -130,40 +150,49 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                     <div class="lg:col-span-3 w-full lg:sticky top-0 text-center">
 
                     <div className="lg:col-span-3 w-full lg:sticky top-0 text-center">
-      {/* Afficher l'image sélectionnée en grand */}
-      <div className="px-4 py-10 rounded-lg shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] relative">
-        <img
-          src={selectedImage}
-          alt="Product"
-          className="w-3/4 rounded object-cover mx-auto"
-        />
-      </div>
-
-                      {/* Miniatures d'images */}
-                      <div className="mt-6 flex flex-wrap justify-center gap-6 mx-auto">
-                        {product.Image.map((image, index) => (
-                          <div
-                            key={index}
-                            className="w-24 h-20 flex items-center justify-center rounded-lg p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] cursor-pointer"
-                            onClick={() => setSelectedImage(image)} // Change l'image sélectionnée lorsqu'on clique
-                          >
-                            <img
-                              src={image}
-                              alt={`Product ${index + 1}`}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        ))}
-                      </div>
+                    <div
+                      className="relative w-3/4 mx-auto overflow-hidden"
+                      onMouseMove={handleMouseMove}
+                      onMouseLeave={handleMouseLeave}
+                      style={{
+                        height: '400px', // Vous pouvez ajuster la taille selon vos besoins
+                        backgroundImage: `url(${selectedImage})`,
+                        backgroundPosition: zoomStyle.backgroundPosition,
+                        backgroundSize: zoomStyle.backgroundSize,
+                        backgroundRepeat: 'no-repeat',
+                        cursor: 'zoom-in',
+                      }}
+                    >
+                      <img
+                        src={selectedImage}
+                        alt="Product"
+                        className="w-full h-full object-cover opacity-0" // Image invisible en fond pour le zoom
+                      />
+                    </div>
+                     {/* Miniatures d'images */}
+                    <div className="mt-6 flex flex-wrap justify-center gap-6 mx-auto">
+                      {product?.Image.map((image, index) => (
+                        <div
+                          key={index}
+                          className="w-24 h-20 flex items-center justify-center rounded-lg p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] cursor-pointer"
+                          onClick={() => setSelectedImage(image)} // Change l'image sélectionnée lorsqu'on clique
+                        >
+                          <img
+                            src={image}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-full object-contain transition-transform duration-300 transform hover:scale-110"
+                          />
+                        </div>
+                      ))}
+                    </div>
                     </div>
                     </div>
 
                     <div class="lg:col-span-2">
                     <div class="flex items-center justify-between gap-6 mb-6">
                             <div class="text">
-                                <h2 class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2">{product.Product}
+                                <h2 class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2">{product?.Product}
                                 </h2>
-                                <p class="font-normal text-base text-gray-500">{product.Category} / {product.SubCategory}</p>
                             </div>
                             <button class="group transition-all duration-500 p-0.5">
                                 <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
@@ -172,7 +201,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                                         class="fill-indigo-50 transition-all duration-500 group-hover:fill-indigo-100"
                                         cx="30" cy="30" r="30" fill="" />
                                     <path
-                                        class="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-700"
+                                        class="stroke-[#011d28] transition-all duration-500 group-hover:stroke-[#011d28e6]"
                                         d="M21.4709 31.3196L30.0282 39.7501L38.96 30.9506M30.0035 22.0789C32.4787 19.6404 36.5008 19.6404 38.976 22.0789C41.4512 24.5254 41.4512 28.4799 38.9842 30.9265M29.9956 22.0789C27.5205 19.6404 23.4983 19.6404 21.0231 22.0789C18.548 24.5174 18.548 28.4799 21.0231 30.9184M21.0231 30.9184L21.0441 30.939M21.0231 30.9184L21.4628 31.3115"
                                         stroke="" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round"
                                         stroke-linejoin="round" />
@@ -183,11 +212,11 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                       
                             <div class="flex items-center">
                                 <h5 class="font-manrope font-semibold text-2xl leading-9 text-gray-900 ">
-                                {product.Price.toFixed(2)}
+                                {product?.Price}
                                 <span className="ml-1 text-xs">Dt</span>
                                  </h5>
-                                 {product.OldPrice > product.Price && (
-                                <span class="ml-3 font-semibold text-lg text-[#c5274c]">{Math.round(((product.OldPrice - product.Price) * 100) / product.OldPrice)}% réduction</span>
+                                 {product?.OldPrice > product?.Price && (
+                                <span class="ml-3 font-semibold text-lg text-[#c5274c]">{Math.round(((product?.OldPrice - product?.Price) * 100) / product?.OldPrice)}% réduction</span>
                                  )}
                                 </div>
                             <svg class="mx-5 max-[400px]:hidden" xmlns="http://www.w3.org/2000/svg" width="2"
@@ -216,7 +245,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                                         </clipPath>
                                     </defs>
                                 </svg>
-                                <span class="text-base font-medium text-white">{product.Rating}</span>
+                                <span class="text-base font-medium text-white">{product?.Rating}</span>
                             </button>
                         </div>
                         <div>
@@ -224,7 +253,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
       <p className="font-medium text-lg text-gray-900 mb-2">Taille</p>
       {/* Boutons de tailles */}
 <div className="grid grid-cols-2 min-[400px]:grid-cols-4 gap-3 mb-3 min-[400px]:mb-8">
-  {product.Variants.map((variant, index) => (
+  {product?.Variants.map((variant, index) => (
     <button
       key={index}
       onClick={() => handleSizeChange(variant.Size)} // Mise à jour de l'état lors du clic
@@ -292,14 +321,14 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
         onClick={handleIncrease}
       >
         <svg className="stroke-black group-hover:stroke-black" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" />
+          <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#000" stroke-width="1.6" stroke-linecap="round" />
         </svg>
       </button>
     </div>
                             <button
                             onClick={handleAddToCart}
-                                class="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
-                                <svg class="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"
+                                class="group py-3 px-5 rounded-full bg-indigo-50 text-[#011d28] font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-200 hover:bg-indigo-100">
+                                <svg class="stroke-[#011d28] transition-all duration-500 group-hover:stroke-[#011d28e6]"
                                     width="22" height="22" viewBox="0 0 22 22" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -309,7 +338,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                                 Add to cart</button>
                         </div>
                         <button
-                            class="text-center w-full px-5 py-4 rounded-[100px] bg-indigo-600 flex items-center justify-center font-semibold text-lg text-white shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-300">
+                            class="text-center w-full px-5 py-4 rounded-[100px] bg-[#011d28] flex items-center justify-center font-semibold text-lg text-white shadow-sm shadow-transparent transition-all duration-500 hover:bg-[#011d28e6] hover:shadow-indigo-300">
                             Acheter maintenant
                         </button>
                     </div>
@@ -318,7 +347,7 @@ const [selectedImage, setSelectedImage] = useState(product.Image[0]);
                 <div class="mt-16 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] p-6">
                     <h3 class="text-xl font-bold text-gray-800">Description</h3>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                      {product.Description}
+                      {product?.Description}
                       </p> 
                 
                     <Rating/>

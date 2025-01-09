@@ -84,7 +84,7 @@ const Rating = () => {
                             <div className="h-1.5 w-80 rounded-full bg-gray-200 dark:bg-gray-700">
                                 <div className="h-1.5 rounded-full bg-yellow-300" style={{ width: `${percentage}%` }}></div>
                             </div>
-                            <a href="#" className="w-8 shrink-0 text-right text-sm font-medium leading-none text-primary-700 hover:underline dark:text-primary-500 sm:w-auto sm:text-left">{count} reviews</a>
+                            <a href="#" className="w-8 shrink-0 text-right text-sm font-medium leading-none text-[#011d28] hover:underline dark:text-primary-500 sm:w-auto sm:text-left">{count} reviews</a>
                         </div>
                     </div>
                 ))}

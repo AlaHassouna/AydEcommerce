@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick'; // Import Slider component
 
-const ProductCart = ({ products }) => {
+const ProductCart = ({ products ,nbslidesToShow}) => {
   const sliderRef = useRef(null); // Référence pour accéder au carrousel
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -17,11 +17,18 @@ const ProductCart = ({ products }) => {
   const settings = {
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Show 3 products at once
+    slidesToShow: nbslidesToShow, // Show 3 products at once
     slidesToScroll: 1, // Scroll 3 products at a time
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: nbslidesToShow-1, // Show 3 products on medium screens
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 1151,
         settings: {
           slidesToShow: 3, // Show 3 products on medium screens
           slidesToScroll: 1,
@@ -44,12 +51,15 @@ const ProductCart = ({ products }) => {
     ],
   };
 
+
+
+  
   return (
     <div className="relative mb-4 ">
       {/* Boutons de contrôle sur les côtés */}
       <button
         onClick={() => sliderRef.current.slickPrev()} // Appel de la méthode précédente
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-[#011d280c] p-3 text-[#011d28] hover:bg-[#011d2814]"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-[#e2e2e20c] p-3 text-[#011d28] hover:bg-[#011d2814] transition-all duration-300 ease-in-out transform hover:scale-110"
         style={{ transform: 'translateY(-50%)' }}
       >
        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -60,7 +70,7 @@ const ProductCart = ({ products }) => {
 
       <button
         onClick={() => sliderRef.current.slickNext()} // Appel de la méthode suivante
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-[#011d280c] p-3 text-[#011d28] hover:bg-[#011d2814]"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full bg-[#e2e2e20c] p-3 text-[#011d28] hover:bg-[#011d2814] transition-all duration-300 ease-in-out transform hover:scale-110"
         style={{ transform: 'translateY(-50%)' }}
       >
         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -75,19 +85,27 @@ const ProductCart = ({ products }) => {
           
             <div
               key={product.UID}
-              className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+             className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800 transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
               
            >
               
-              <div className="h-56 ">
-                <Link to={`/product/${product.UID}`} state={{ product }}>
-                
+              <div className="h-56 relative overflow-hidden group">
+              <Link to={`/product/${product.UID}`} state={{ product }}>
+                {/* Conteneur pour l'image avec animation */}
+                <div className="relative h-56 overflow-hidden group">
                   <img
-                    className="mx-auto h-full object-contain"
-                    src={product.Image[0]} // Affiche la première image
+                    className="mx-auto h-full object-contain group-hover:opacity-0 transition-opacity duration-300 ease-in-out"
+                    src={product.Image[0]} // Première image
                     alt={`Image of ${product.Product}`}
                   />
-                </Link>
+                  {/* Image au survol avec une animation de transition */}
+                  <img
+                    className="absolute inset-0 h-full w-full object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                    src={product.Image[1]} // Deuxième image pour l'animation
+                    alt={`Image hover of ${product.Product}`}
+                  />
+                </div>
+              </Link>
               </div>
               <div className="pt-6">
                 <div className="mb-4 flex items-center justify-between gap-4">
@@ -185,7 +203,7 @@ const ProductCart = ({ products }) => {
                       </div>
                     )} */}
                     <div className="text-lg font-bold text-gray-900 dark:text-white">
-                      {product.Price.toFixed(2)}
+                      {product.Price}
                       <span className="ml-1 text-xs">Dt</span>
                     </div>
                   </div>

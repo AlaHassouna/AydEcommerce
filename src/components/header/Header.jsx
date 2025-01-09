@@ -8,8 +8,9 @@ import { MyContext } from '../../App';
 const Header = () => {
   const context= useContext(MyContext)
   const { panier } = useContext(MyContext);
-  // console.log("panier ",panier)
-  // console.log("panier.length ",panier.length)
+  const { setPanier } = useContext(MyContext);
+  console.log("panier ",panier)
+  console.log("panier.length ",panier.length)
   const [cart, setCart] = useState(false);
   const [account, setAccount] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -26,7 +27,11 @@ const Header = () => {
   };
 
   const handleAccept = () => {
-    context.setPanier((prev) => prev.filter((_, idx) => idx !== itemIndex));
+    setPanier((prev) => {
+      const updatedPanier = prev.filter((_, idx) => idx !== itemIndex);
+      localStorage.setItem("panier", JSON.stringify(updatedPanier)); // Met à jour le localStorage
+      return updatedPanier;
+    });
     setShowModal(false); // Ferme le modal
     setItemIndex(null);  // Réinitialise l'index
   };
@@ -34,14 +39,87 @@ const Header = () => {
   const handleDecline = () => {
     setShowModal(false); // Ferme le modal sans suppression
   };
-  const Categories = [
-    { name: "Vêtements Hommes", subcategories: ["T-shirts", "Chemises", "Vestes"] },
-    { name: "Vêtements Femmes", subcategories: ["Robes", "Blouses"] },
-    { name: "Vêtements Enfants", subcategories: [] }, // Pas de sous-catégories
-    { name: "Accessoires", subcategories: ["Sacs", "Chapeaux", "Écharpes"] },
+//   const Categories = [
+//     { Name: "Vêtements Hommes", subCategorie: ["T-shirts", "Chemises", "Vestes"] },
+//     { Name: "Vêtements Femmes", subCategorie: ["Robes", "Blouses"] },
+//     { Name: "Vêtements Enfants", subCategorie: [] }, // Pas de sous-catégories
+//     { Name: "Accessoires", subCategorie: ["Sacs", "Chapeaux", "Écharpes"] },
    
-];
-
+// ];
+const mockCategories= [
+  {
+    id: 1,
+    Name: "T-Shirts",
+    subCategorie: [
+      "Cartoons",
+      "Films",
+      "Animes",
+      "Jeux vidéo",
+      "Art abstrait",
+      "Humour",
+      "Minimaliste"
+    ],
+    Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 2,
+    Name: "Hoodies",
+    subCategorie: [
+      "Cartoons",
+      "Films",
+      "Animes",
+      "Streetwear",
+      "Vintage",
+      "Saisonnier"
+    ],
+    Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 3,
+    Name: "Vestes",
+    subCategorie: [
+      "Films",
+      "Animes",
+      "Logos",
+      "Minimaliste",
+      "Détail graphique"
+    ],
+    Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 4,
+    Name: "Jupes",
+    subCategorie: [
+      "Motifs floraux",
+      "Minimaliste",
+      "Thème animé",
+      "Art abstrait"
+    ],
+    Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 5,
+    Name: "Robes",
+    subCategorie: [
+      "Casual animé",
+      "Élégance minimaliste",
+      "Saisonnière",
+      "Art moderne"
+    ],
+    Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 6,
+    Name: "Chemises",
+    SubCategory: [
+      "Films et séries",
+      "Art graphique",
+      "Thème cartoon",
+      "Vintage"
+    ],
+    Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+  }
+]
   const toggleMenu = () => {
     setMenu(!menu);
   };
@@ -58,6 +136,7 @@ const Header = () => {
     setOpenCategory(openCategory === index ? null : index);
     
   };  
+  
   return (
    
     // <header class="shadow-md bg-white dark:bg-gray-800">
@@ -164,22 +243,22 @@ const Header = () => {
                   >
                     
                       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200 ">
-                        {Categories.map((category, index) => (
+                        {mockCategories.map((category, index) => (
                           <li key={index} className="relative group">
-                            {category.subcategories && category.subcategories.length > 0 ? (
+                            {category.subCategorie && category.subCategorie.length > 0 ? (
                               // Afficher une catégorie avec sous-catégories
                               <div>
                                 <button
                                   className="flex justify-between items-center w-full px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600"
                                 >
-                                  {category.name}
+                                  {category.Name}
                                   <svg class="w-4 h-4 text-[#011d28] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
                                   </svg>
 
                                 </button>
                                 <ul className="w-full  border-2 border-[#011d28] absolute left-full top-0 hidden group-hover:block bg-white dark:bg-gray-700 shadow-lg rounded-lg">
-                                  {category.subcategories.map((subcategory, subIndex) => (
+                                  {category.subCategorie.map((subcategory, subIndex) => (
                                     <li key={subIndex}>
                                       <a
                                         href="#"
@@ -197,7 +276,7 @@ const Header = () => {
                                 href="#"
                                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                               >
-                                {category.name}
+                                {category.Name}
                               </a>
                             )}
                           </li>
@@ -257,29 +336,29 @@ const Header = () => {
                                       />
                                     </a>
                                     <div className="flex flex-col">
-  {/* Nom du produit */}
-  <a
-    href="#"
-    className="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline"
-  >
-    {item.Product}
-  </a>
-  
-  {/* Taille et couleur */}
-  <div className="mt-1">
-    <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
-      Taille : {item.size}
-    </p>
-    <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
-      Couleur : {item.color}
-    </p>
-  </div>
-  
-</div>
-                                    </div>
-                                    <p className="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        {/* Nom du produit */}
+                                        <a
+                                          href="#"
+                                          className="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline"
+                                        >
+                                          {item.Product}
+                                        </a>
+                                        
+                                        {/* Taille et couleur */}
+                                        <div className="mt-1">
+                                          <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
+                                            Taille : {item.size}
+                                          </p>
+                                          <p className="text-xs font-normal leading-none text-gray-500 dark:text-gray-400">
+                                            Couleur : {item.color}
+                                          </p>
+                                        </div>
+                                        <p className="mt-0.5 truncate text-xs	 font-normal text-gray-500 dark:text-gray-400">
                                       {item.Price.toFixed(2)}
                                     </p>
+                                      </div>
+                                    </div>
+                                    
                                   </div>
                     
                                   <div className="flex items-center justify-end gap-6">
@@ -371,14 +450,14 @@ const Header = () => {
                               </div>
                             ))}
                   
-                            <a
-                              href="#"
-                              title=""
-                              className="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg bg-[#011d28] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#011d28e6] focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                            <Link
+                              to="/checkout"
+                             
+                              className="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium text-white bg-[#011d28] hover:bg-[#011d28e6] focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                               role="button"
                             >
-                              Proceed to Checkout
-                            </a>
+                              Passer la commande
+                            </Link>
                           </div>
                         ) : (
                           

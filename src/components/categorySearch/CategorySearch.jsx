@@ -5,11 +5,13 @@ import { Link } from 'react-router-dom';
 
 function CategorySearch({mockCategories}) {
   const [categoryList, setCategoryList] = useState([]);
-
+console.log("mockCategories",mockCategories)
   useEffect(() => {
     // Simulation d'une récupération des données
     setCategoryList(mockCategories);
-  }, []);
+console.log("categoryList",categoryList)
+
+  }, [mockCategories]);
 
   return (
     <div className='my-8 items-center px-5 flex flex-col gap-4'>
@@ -37,29 +39,34 @@ function CategorySearch({mockCategories}) {
       
 
       {/* Affichage des catégories */}
-      <div className='grid grid-cols-3 mt-5 md:grid-cols-4 lg:grid-cols-6 gap-4 '>
-        {categoryList.length > 0
-          ? categoryList.map((item) => (
-              <Link
-                to={`/search/${item.Name}`}
-                key={item.id}
-                className='flex flex-col text-center gap-2 items-center p-5 bg-[#011d28] hover:bg-[#011d28e6]  rounded-lg hover:scale-110 transition-all ease-in-out'
-              >
-                <img
-                  src={item.Icon}
-                  alt={`${item.Name} Icon`}
-                  className='w-10 h-10 filter invert hue-rotate-180'
-                />
-                <label className='text-white text-sm'>{item.Name}</label>
-              </Link>
-            ))
-          : [1, 2, 3, 4, 5, 6].map((item) => (
-              <div
-                key={item}
-                className='h-[100px] w-[100px] m-2 bg-slate-200 animate-pulse rounded-lg'
-              ></div>
-            ))}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-6 mt-8">
+      {categoryList.length > 0
+  ? categoryList.map((item) => (
+      <Link
+        to={`/search/${item.Name}`}
+        key={item.categoryID}
+        className="relative group w-full h-[300px] rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 ease-out"
+      >
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${item.Icon})` }}
+        ></div>
+        {/* L'effet foncé initial */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60 group-hover:opacity-0 opacity-100 transition-opacity duration-300 ease-out"></div>
+        <div className="relative z-10 p-4 flex items-center justify-center flex-col text-center">
+          <h3 className="text-white text-2xl font-bold">{item.Name}</h3>
+        </div>
+      </Link>
+    ))
+  : [1, 2, 3, 4].map((item) => (
+      <div
+        key={item}
+        className="w-full h-[300px] bg-slate-200 animate-pulse rounded-lg"
+      ></div>
+    ))}
+
       </div>
+
     </div>
   );
 }

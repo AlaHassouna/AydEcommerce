@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.slick-list {
+    margin: 0 -7px;
+  }
+  
+  .slick-list .slick-slide > div {
+    padding: 0 10px;
+  }
+  html, body {
+    overflow-x: hidden;
+  }

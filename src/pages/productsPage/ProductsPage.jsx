@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Products from '../../components/products/Products';
+import axios from 'axios';
+
 // import Products 
 const ProductsPage = () => {
     const mockCategories = [
@@ -605,7 +607,57 @@ const ProductsPage = () => {
           CreatedAt: "07 Feb 2024",
       }
     ];
-  return (
+  
+    // const [mockCategories, setCategories] = useState([]); // État pour stocker les catégories
+  
+  
+  // useEffect(() => {
+  //   // Fonction pour récupérer les catégories
+  //   const fetchCategories = async () => {
+  //       try {
+  //           const response = await axios.get('https://localhost:7057/api/Category', {
+  //               headers: {
+  //                   accept: 'application/json',
+  //               },
+  //           });
+  //           setCategories(response.data); // Mettre à jour l'état avec les données récupérées
+  //       } catch (error) {
+  //           console.error('Erreur lors de la récupération des catégories :', error);
+  //       }
+  //   };
+  
+  //   fetchCategories(); // Appel de la fonction
+  // }, []);
+  useEffect(()=>{
+  console.log("mockCategories ",mockCategories)
+  },[mockCategories])
+  // const [products, setProducts] = useState([]);
+    const [error, setError] = useState(null);
+    // useEffect(() => {
+    //   // Faire la requête API avec Axios
+    //   axios
+    //     .get('https://localhost:7057/api/Products', {
+    //       headers: {
+    //         accept: 'application/json', // Vous pouvez également utiliser 'application/json' si vous attendez une réponse en JSON
+    //       },
+    //     })
+    //     .then((response) => {
+    //       console.log("response.data ",response.data)
+    //       setProducts(response.data); // Stocker les données reçues dans l'état
+    //     })
+    //     .catch((error) => {
+    //       setError(error.message); // En cas d'erreur, définir l'état d'erreur
+    //     });
+    // }, []);
+    // Vérifier si `products` est non vide
+  useEffect(() => {
+    if (products.length > 0) {
+      console.log('Products is no longer empty:', products);
+      // Vous pouvez exécuter une logique supplémentaire ici
+    }
+  }, [products]);
+  
+    return (
     <main class="h-auto pt-5">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div
