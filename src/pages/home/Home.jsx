@@ -6,7 +6,7 @@ import Cateogries from '../../components/categories/Cateogries'
 import CategorySearch from '../../components/categorySearch/CategorySearch'
 import Products from '../../components/products/Products'
 import Footer from '../../components/footer/Footer'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 // import axios from 'axios';
 
 
@@ -1043,6 +1043,40 @@ useEffect(() => {
   }
 }, [bestSellers]);
 
+const [showNotification, setShowNotification] = useState(false);
+// const [progress, setProgress] = useState(0);
+// useEffect(() => {
+//   if (showNotification) {
+//     let timer = setInterval(() => {
+//       setProgress((oldProgress) => {
+//         if (oldProgress === 100) {
+//           clearInterval(timer);
+//           setShowNotification(false);
+//           return 100;
+//         }
+//         return Math.min(oldProgress + 1, 100);
+//       });
+//     }, 30); // La barre progresse toutes les 30ms
+
+//     // Cache la notification après 3 secondes
+//     setTimeout(() => {
+//       setShowNotification(false);
+//     }, 3000);
+//     setProgress(0);
+//   }
+// }, [showNotification]);
+  useEffect(() => {
+    const notification = localStorage.getItem('showNotification') === 'true';
+    setShowNotification(notification);
+
+    if (notification) {
+      setTimeout(() => {
+        setShowNotification(false);
+        localStorage.removeItem('showNotification');
+      }, 5000);
+    }
+    localStorage.setItem('showNotification', 'false');
+  }, []);
 
 // const [hotProduct, setHotProduct] = useState([]);
   // const [error, setError] = useState(null);
@@ -1107,7 +1141,12 @@ const hotProduct =
   CreatedAt: "10 Dec 2023"
 
     };
+    const location = useLocation();
 
+    useEffect(() => {
+      // Forcer le scroll au top lors du changement de route
+      window.scrollTo(0, 0);
+    }, [location]); // Le tableau avec `location` permet de déclencher l'effet à chaque changement de route
   return (
     // <div>
       
@@ -1115,7 +1154,35 @@ const hotProduct =
     //   <BestSellers/>
     // </div>
     <main class="px-4  w-full mx-auto h-auto ">
-      
+      {showNotification && (
+                                        <div
+                                          className="fixed z-10 top-4 right-4 bg-gradient-to-r from-[#011d28]  to-[#065875e6] text-white py-4 px-6 rounded-lg shadow-xl transform transition-all duration-500 ease-in-out w-72" // Réduction de la largeur
+                                          style={{
+                                            opacity: showNotification ? 1 : 0,
+                                            transform: showNotification ? 'translateY(0)' : 'translateY(-20px)',
+                                          }}
+                                        >
+                                          {/* Progress Bar */}
+                                          {/* <div className="w-full bg-[#011d28] rounded-full h-2 mt-2 overflow-hidden">
+                                            <div
+                                              className="bg-gradient-to-r from-[#023b52] to-[#3e6d7ee6] h-2 rounded-full shadow-lg"
+                                              style={{
+                                                width: `${progress}%`,
+                                                transition: 'width 0.03s ease-out', // Smooth transition
+                                              }}
+                                            ></div>
+                                          </div> */}
+                                          
+                                          <div className="flex flex-col items-center space-y-1 mt-3">
+                                        <span className="text-sm font-semibold text-center tracking-wide">
+                                        Bienvenue parmi nous ! 
+                                        </span>
+                                        <span className="text-xs font-normal text-center tracking-wide">
+                                        Votre commande est finalisée avec succès.
+                                        </span>
+                                      </div>
+                                        </div>
+                                      )}
       <div class=" h-auto mb-4 "  >
         <Carousel />
       </div>         

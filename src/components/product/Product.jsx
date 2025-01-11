@@ -376,34 +376,34 @@ useEffect(() => {
                                 </svg>
                                 Add to cart</button>
                                 {showNotification && (
-  <div
-    className="fixed z-10 top-4 right-4 bg-gradient-to-r from-[#011d28]  to-[#065875e6] text-white py-4 px-6 rounded-lg shadow-xl transform transition-all duration-500 ease-in-out w-72" // Réduction de la largeur
-    style={{
-      opacity: showNotification ? 1 : 0,
-      transform: showNotification ? 'translateY(0)' : 'translateY(-20px)',
-    }}
-  >
-    {/* Progress Bar */}
-    <div className="w-full bg-[#011d28] rounded-full h-2 mt-2 overflow-hidden">
-      <div
-        className="bg-gradient-to-r from-[#023b52] to-[#3e6d7ee6] h-2 rounded-full shadow-lg"
-        style={{
-          width: `${progress}%`,
-          transition: 'width 0.03s ease-out', // Smooth transition
-        }}
-      ></div>
-    </div>
-    
-    <div className="flex flex-col items-center space-y-1 mt-3">
-  <span className="text-sm font-semibold text-center tracking-wide">
-    C'est dans le panier !
-  </span>
-  <span className="text-xs font-normal text-center tracking-wide">
-    Vous êtes à un pas de faire des merveilles.
-  </span>
-</div>
-  </div>
-)}
+                                  <div
+                                    className="fixed z-10 top-4 right-4 bg-gradient-to-r from-[#011d28]  to-[#065875e6] text-white py-4 px-6 rounded-lg shadow-xl transform transition-all duration-500 ease-in-out w-72" // Réduction de la largeur
+                                    style={{
+                                      opacity: showNotification ? 1 : 0,
+                                      transform: showNotification ? 'translateY(0)' : 'translateY(-20px)',
+                                    }}
+                                  >
+                                    {/* Progress Bar */}
+                                    <div className="w-full bg-[#011d28] rounded-full h-2 mt-2 overflow-hidden">
+                                      <div
+                                        className="bg-gradient-to-r from-[#023b52] to-[#3e6d7ee6] h-2 rounded-full shadow-lg"
+                                        style={{
+                                          width: `${progress}%`,
+                                          transition: 'width 0.03s ease-out', // Smooth transition
+                                        }}
+                                      ></div>
+                                    </div>
+                                    
+                                    <div className="flex flex-col items-center space-y-1 mt-3">
+                                  <span className="text-sm font-semibold text-center tracking-wide">
+                                    C'est dans le panier !
+                                  </span>
+                                  <span className="text-xs font-normal text-center tracking-wide">
+                                    Vous êtes à un pas de faire des merveilles.
+                                  </span>
+                                </div>
+                                  </div>
+                                )}
 
                         </div>
                         <button onClick={handleAddToCartAndRedirect}

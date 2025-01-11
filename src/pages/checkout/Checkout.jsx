@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { MyContext } from '../../App';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
   const { panier, setPanier } = useContext(MyContext);
@@ -9,6 +9,8 @@ const Checkout = () => {
     const [showModal, setShowModal] = useState(false);
     const [gouvernoratModal, setGouvernoratModal] = useState(false);
     const [selectedGouvernorat, setSelectedGouvernorat] = useState("");
+    
+    // const [showNotification, setShowNotification] = useState(false);
 
       const [showModalDelete, setShowModalDelete] = useState(false);
         const [itemIndex, setItemIndex] = useState(null);
@@ -101,7 +103,7 @@ const Checkout = () => {
     return true;
   };
 
-
+  const navigate = useNavigate();
   // Fonction pour passer la commande
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -120,6 +122,11 @@ const Checkout = () => {
       closeModal();
       // Logique pour soumettre la commande, par exemple :
       console.log("Commande passée :", order);
+      setPanier([]);
+      localStorage.removeItem("panier");
+      navigate('/');
+      localStorage.setItem('showNotification', 'true');
+
     }
   };
 // Function to handle incrementing quantity
@@ -526,6 +533,7 @@ const handleDecrement = (index) => {
                 </div>
             </div>
         )}
+        
         </div>
         <div className="flex items-center justify-center gap-2">
           <span className="text-sm font-normal text-gray-500 dark:text-gray-400"> ou </span>

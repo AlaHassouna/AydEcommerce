@@ -83,13 +83,13 @@ const ProductsPage = () => {
             UID: "C001",
             Product: "T-shirt",
             Description: "Un T-shirt classique et confortable, parfait pour toutes les occasions décontractées. Fabriqué en coton doux pour un confort optimal toute la journée.",
-            Category: "Tops",
-            SubCategory: "Casual Wear",
+            Category: "T-Shirts",
+            SubCategory: "Films",
             Brand: "AYD",
             OldPrice: 35.00,
             Price: 19.99,
             Stock: 100,
-            Rating: 4.3,
+            Rating: 3.3,
             Order: 200,
             Sales: 3000,
             IsFeatured: true,
@@ -145,7 +145,7 @@ const ProductsPage = () => {
             OldPrice: 65.00,
             Price: 49.99,
             Stock: 60,
-            Rating: 4.5,
+            Rating: 2.5,
             Order: 150,
             Sales: 2500,
             IsFeatured: false,
@@ -173,8 +173,8 @@ const ProductsPage = () => {
             UID: "C003",
             Product: "Jacket",
             Description: "Une veste élégante et chaude pour affronter les jours les plus froids avec style. Matériau imperméable et coupe-vent.",
-            Category: "Outerwear",
-            SubCategory: "Winter Wear",
+            Category: "T-Shirts",
+            SubCategory: "Cartoons",
             Brand: "AYD",
             OldPrice: 105.00,
             Price: 89.99,
@@ -317,7 +317,7 @@ const ProductsPage = () => {
           OldPrice: 45.99,
           Price: 24.99,
           Stock: 120,
-          Rating: 4.3,
+          Rating: 2.3,
           Order: 130,
           Sales: 2200,
           IsFeatured: false,
@@ -369,7 +369,7 @@ const ProductsPage = () => {
           OldPrice: 45.00,
           Price: 29.99,
           Stock: 70,
-          Rating: 4.5,
+          Rating: 1.5,
           Order: 80,
           Sales: 1400,
           IsFeatured:true,
@@ -473,7 +473,7 @@ const ProductsPage = () => {
           OldPrice: 34.99,
           Price: 34.99,
           Stock: 90,
-          Rating: 4.6,
+          Rating: 1.6,
           Order: 140,
           Sales: 2800,
           IsFeatured:true,
@@ -734,7 +734,7 @@ const ProductsPage = () => {
 
     return (
     <main class="h-auto pt-5">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 mb-4">
+                <div class="grid grid-cols-1  gap-4 mb-4">
                           <div
                           class="rounded-lg  h-full"
                           >
