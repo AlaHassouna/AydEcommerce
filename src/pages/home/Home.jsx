@@ -930,8 +930,8 @@ const mockCategories= [
       "Animes",
       "Jeux vidéo",
       "Art abstrait",
-      "Humour",
-      "Minimaliste"
+      "Polo T-Shirts",
+      "Casual"
     ],
     Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
@@ -943,10 +943,46 @@ const mockCategories= [
       "Films",
       "Animes",
       "Streetwear",
-      "Vintage",
+      "Casual",
       "Saisonnier"
     ],
     Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 8,
+    Name: "Sweaters",
+    SubCategory: [
+      "Cartoons",
+      "Films",
+      "Streetwear",
+      "Vintage",
+      "Saisonnier",
+      "Casual"
+    ],
+    Icon: "https://images.pexels.com/photos/2613261/pexels-photo-2613261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 10,  // ID unique pour cette catégorie
+    Name: "Survêtements",  // Nom de la catégorie
+    SubCategory: [
+      "Casual",
+      "Sport",
+      "Streetwear",
+      "Saisonnier"
+    ],  // Sous-catégories possibles pour les tracksuits
+    Icon: "https://images.pexels.com/photos/26664909/pexels-photo-26664909/free-photo-of-les-moments.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
+  },
+  
+  {
+    id: 7,  // ID unique pour cette catégorie
+    Name: "Pantalons",  // Nom de la catégorie
+    SubCategory: [
+      "Jeans",
+      "Chinos",
+      "Jogging",
+      "Formel"
+    ],  // Sous-catégories
+    Icon: "https://images.pexels.com/photos/1895943/pexels-photo-1895943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
   },
   {
     id: 3,
@@ -955,19 +991,31 @@ const mockCategories= [
       "Films",
       "Animes",
       "Logos",
-      "Minimaliste",
+      "Casual",
+      "Formel",
       "Détail graphique"
     ],
     Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 9,
+    Name: "Shorts",
+    SubCategory: [
+      "Casual",
+      "Sport",
+      "Vintage",
+      "Saisonnier",
+      "Streetwear"
+    ],
+    Icon: "https://images.pexels.com/photos/18394309/pexels-photo-18394309/free-photo-of-portrait-d-un-jeune-garcon-avec-une-silhouette-sombre-contre-le-mur.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   {
     id: 4,
     Name: "Jupes",
     subCategorie: [
       "Motifs floraux",
-      "Minimaliste",
-      "Thème animé",
-      "Art abstrait"
+      "Casual",
+      
     ],
     Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
@@ -975,23 +1023,39 @@ const mockCategories= [
     id: 5,
     Name: "Robes",
     subCategorie: [
-      "Casual animé",
+      "Casual",
       "Élégance minimaliste",
       "Saisonnière",
       "Art moderne"
     ],
     Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
+  // {
+  //   id: 6,
+  //   Name: "Chemises",
+  //   SubCategory: [
+  //     "Films et séries",
+  //     "Art graphique",
+  //     "Thème cartoon",
+  //     "Vintage"
+  //   ],
+  //   Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+  // },
+  
+  
+  
+  
   {
-    id: 6,
-    Name: "Chemises",
-    SubCategory: [
-      "Films et séries",
-      "Art graphique",
-      "Thème cartoon",
-      "Vintage"
+    id: 10,
+    Name: "Accessoires",
+    subCategorie: [
+      "Écharpes",
+      "Chapeaux",
+      "Gants",
+      "Bijoux",
+      "Sacs à main"
     ],
-    Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+    Icon: "https://images.pexels.com/photos/30076369/pexels-photo-30076369.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   }
 ]
 // const [categories, setCategories] = useState([]); // État pour stocker les catégories
@@ -1202,7 +1266,7 @@ const hotProduct =
             {/* Header Section */}
             <div className="flex justify-between items-center mb-4 md:mt-4 flex-wrap">
               <div>
-                <h1 className="block mb-0 font-medium text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
+                <h1 className="block mb-0 font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
                   Meilleures ventes
                 </h1>
                 <p className="mt-[-4px] text-xs sm:text-sm lg:text-base font-normal text-gray-500 dark:text-gray-300">
@@ -1277,7 +1341,7 @@ const hotProduct =
       >
         <div className="flex ml-3 justify-between items-center mb-4 md:mt-4 flex-wrap">
               <div>
-                <h1 className="block mb-0 font-medium text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
+                <h1 className="block mb-0 font-bold text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
                 Produits les mieux notés
                 </h1>
                 <p className="mt-[-4px] text-xs sm:text-sm lg:text-base font-normal text-gray-500 dark:text-gray-300">
@@ -1323,7 +1387,7 @@ const hotProduct =
       >
         <div className="flex  ml-3 justify-between items-center mb-4 md:mt-4 flex-wrap">
               <div>
-                <h1 className="block mb-0 font-medium text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
+                <h1 className="block mb-0 font-bold  text-lg sm:text-xl lg:text-2xl text-gray-900 dark:text-white">
                 Les Dernières Nouveautés
                 </h1>
                 <p className="mt-[-4px] text-xs sm:text-sm lg:text-base font-normal text-gray-500 dark:text-gray-300">

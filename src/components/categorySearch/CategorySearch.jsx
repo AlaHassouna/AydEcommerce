@@ -39,12 +39,14 @@ console.log("categoryList",categoryList)
       
 
       {/* Affichage des catégories */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-6 mt-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-6 mt-8">
       {categoryList.length > 0
   ? categoryList.map((item) => (
       <Link
-        to={`/search/${item.Name}`}
+      to="/products"
+      state={{ categoryName: item.Name }} // Passez l'état avec categoryName
         key={item.categoryID}
+        
         className="relative group w-full h-[300px] rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 ease-out"
       >
         <div
@@ -54,7 +56,7 @@ console.log("categoryList",categoryList)
         {/* L'effet foncé initial */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60 group-hover:opacity-0 opacity-100 transition-opacity duration-300 ease-out"></div>
         <div className="relative z-10 p-4 flex items-center justify-center flex-col text-center">
-          <h3 className="text-white text-2xl font-bold">{item.Name}</h3>
+          <h3 className="text-white text-2xl font-bold truncate">{item.Name}</h3>
         </div>
       </Link>
     ))

@@ -56,8 +56,8 @@ const mockCategories= [
       "Animes",
       "Jeux vidéo",
       "Art abstrait",
-      "Humour",
-      "Minimaliste"
+      "Polo T-Shirts",
+      "Casual"
     ],
     Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
@@ -69,10 +69,46 @@ const mockCategories= [
       "Films",
       "Animes",
       "Streetwear",
-      "Vintage",
+      "Casual",
       "Saisonnier"
     ],
     Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 8,
+    Name: "Sweaters",
+    subCategorie: [
+      "Cartoons",
+      "Films",
+      "Streetwear",
+      "Vintage",
+      "Saisonnier",
+      "Casual"
+    ],
+    Icon: "https://images.pexels.com/photos/2613261/pexels-photo-2613261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 10,  // ID unique pour cette catégorie
+    Name: "Survêtements",  // Nom de la catégorie
+    subCategorie: [
+      "Casual",
+      "Sport",
+      "Streetwear",
+      "Saisonnier"
+    ],  // Sous-catégories possibles pour les tracksuits
+    Icon: "https://images.pexels.com/photos/26664909/pexels-photo-26664909/free-photo-of-les-moments.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
+  },
+  
+  {
+    id: 7,  // ID unique pour cette catégorie
+    Name: "Pantalons",  // Nom de la catégorie
+    subCategorie: [
+      "Jeans",
+      "Chinos",
+      "Jogging",
+      "Formel"
+    ],  // Sous-catégories
+    Icon: "https://images.pexels.com/photos/1895943/pexels-photo-1895943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
   },
   {
     id: 3,
@@ -81,19 +117,31 @@ const mockCategories= [
       "Films",
       "Animes",
       "Logos",
-      "Minimaliste",
+      "Casual",
+      "Formel",
       "Détail graphique"
     ],
     Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  },
+  {
+    id: 9,
+    Name: "Shorts",
+    subCategorie: [
+      "Casual",
+      "Sport",
+      "Vintage",
+      "Saisonnier",
+      "Streetwear"
+    ],
+    Icon: "https://images.pexels.com/photos/18394309/pexels-photo-18394309/free-photo-of-portrait-d-un-jeune-garcon-avec-une-silhouette-sombre-contre-le-mur.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
   {
     id: 4,
     Name: "Jupes",
     subCategorie: [
       "Motifs floraux",
-      "Minimaliste",
-      "Thème animé",
-      "Art abstrait"
+      "Casual",
+      
     ],
     Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
@@ -101,23 +149,39 @@ const mockCategories= [
     id: 5,
     Name: "Robes",
     subCategorie: [
-      "Casual animé",
+      "Casual",
       "Élégance minimaliste",
       "Saisonnière",
       "Art moderne"
     ],
     Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   },
+  // {
+  //   id: 6,
+  //   Name: "Chemises",
+  //   SubCategory: [
+  //     "Films et séries",
+  //     "Art graphique",
+  //     "Thème cartoon",
+  //     "Vintage"
+  //   ],
+  //   Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+  // },
+  
+  
+  
+  
   {
-    id: 6,
-    Name: "Chemises",
-    SubCategory: [
-      "Films et séries",
-      "Art graphique",
-      "Thème cartoon",
-      "Vintage"
+    id: 10,
+    Name: "Accessoires",
+    subCategorie: [
+      "Écharpes",
+      "Chapeaux",
+      "Gants",
+      "Bijoux",
+      "Sacs à main"
     ],
-    Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+    Icon: "https://images.pexels.com/photos/30076369/pexels-photo-30076369.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
   }
 ]
   const toggleMenu = () => {
@@ -201,7 +265,7 @@ const mockCategories= [
                       class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                       placeholder="Rechercher ..." 
                       /> */}
-                      <div className="p-4 mb-4 text-sm text-[#011d28] rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                      <div className="p-4 mb-4 text-sm text-[#011d28] rounded-lg  dark:bg-gray-800 " role="alert">
                         <span className="font-medium">Livraison gratuite </span> à partir de 100DT
                       </div>
                       
@@ -218,7 +282,7 @@ const mockCategories= [
                         <button
                           id="dropdownDefaultButton"
                           data-dropdown-toggle="dropdown"
-                          className="text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-2 focus:outline-none focus:ring-[#011d28e6] font-medium rounded-3xl	 text-sm px-5 py-2.5 text-center inline-flex items-center "
+                          className="z-10 text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-2 focus:outline-none focus:ring-[#011d28e6] font-medium rounded-3xl	 text-sm px-5 py-2.5 text-center inline-flex items-center "
                           type="button"
                           onClick={toggleAllCategories}
                         >
@@ -244,49 +308,58 @@ const mockCategories= [
                     {allCategories && (
                     <div
                     id="dropdown"
-                    className="absolute mt-2.5 z-10 border-t-white border-2 border-[#011d28] bg-white divide-y divide-gray-100 rounded-b-lg shadow w-60 dark:bg-gray-700"
+                    className="absolute z-50 border-t-white border-2 border-[#011d28] bg-white divide-y divide-gray-100 rounded-b-lg shadow w-60 dark:bg-gray-700"
                   >
                     
-                      <ul className="py-2 text-sm text-gray-700 dark:text-gray-200 ">
-                        {mockCategories.map((category, index) => (
-                          <li key={index} className="relative group">
-                            {category.subCategorie && category.subCategorie.length > 0 ? (
-                              // Afficher une catégorie avec sous-catégories
-                              <div>
-                                <button
-                                  className="flex justify-between items-center w-full px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600"
-                                >
-                                  {category.Name}
-                                  <svg class="w-4 h-4 text-[#011d28] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-                                  </svg>
+                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200 ">
+  {mockCategories.map((category, index) => (
+    <li key={index} className="relative group">
+      {category.subCategorie && category.subCategorie.length > 0 ? (
+        // Afficher une catégorie avec sous-catégories
+        <div>
+          <Link
+          
+                to="/products"
+                onClick={() => toggleAllCategories()}
+                state={{ categoryName: category.Name }} // Passez l'état avec categoryName
+                  key={category.id}
+                
+            className="flex justify-between items-center w-full px-4 py-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600"
+          >
+            {category.Name}
+            <svg className="w-4 h-4 text-[#011d28] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/>
+            </svg>
+          </Link>
+          <ul className="w-max max-w-full border-2 border-[#011d28] absolute left-full top-0 hidden group-hover:block bg-white dark:bg-gray-700 shadow-lg rounded-lg overflow-x-auto">
+            {category.subCategorie.map((subcategory, subIndex) => (
+              <li key={subIndex}>
+                <Link
+                  to="/products"
+                  onClick={() => toggleAllCategories()}
+                  state={{ categoryName: category.Name ,subCategoryName:subcategory}} // Passez l'état avec categoryName
+                  href="#"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  {subcategory}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        // Afficher une catégorie sans sous-catégories
+        <a
+          href="#"
+          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          {category.Name}
+        </a>
+      )}
+    </li>
+  ))}
+</ul>
 
-                                </button>
-                                <ul className="w-full  border-2 border-[#011d28] absolute left-full top-0 hidden group-hover:block bg-white dark:bg-gray-700 shadow-lg rounded-lg">
-                                  {category.subCategorie.map((subcategory, subIndex) => (
-                                    <li key={subIndex}>
-                                      <a
-                                        href="#"
-                                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                      >
-                                        {subcategory}
-                                      </a>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ) : (
-                              // Afficher une catégorie sans sous-catégories
-                              <a
-                                href="#"
-                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                              >
-                                {category.Name}
-                              </a>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
                     
                   </div>
                   )}
@@ -324,7 +397,7 @@ const mockCategories= [
                         {panier && panier.length > 0 ? (
                           <div
                             id="myCartDropdown1"
-                            className="right-0 divide-y divide-gray-100 overflow-y-auto absolute z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800"
+                            className="right-0 z-50 divide-y divide-gray-100 overflow-y-auto absolute  w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800"
                           >
                             {panier.map((item, index) => (
                               <div className="grid grid-cols-2" key={item.UID || index}>
@@ -528,6 +601,15 @@ const mockCategories= [
   </li>
   <li className="mt-2 lg:mt-0">
     <Link
+        to="/products"
+            title="Produits"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+    >
+      Produits
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
       to="/products/?trie=newest"
      
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
@@ -553,15 +635,7 @@ const mockCategories= [
       Bestsellers
     </Link>
   </li>
-  <li className="mt-2 lg:mt-0">
-    <Link
-      href="#"
-      title="Contact"
-      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
-    >
-      Contact
-    </Link>
-  </li>
+ 
 </ul>
 
               

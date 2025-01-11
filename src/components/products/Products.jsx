@@ -9,7 +9,10 @@ const Products = ({mockCategories,products}) => {
   const [shipping, setShipping] = useState(false);
   const [rating, setRating] = useState(false);
   const [sousCategory, setSousCategory] = useState(false);
-  
+  // Appliquer handleDeleteFilters lors du premier montage ou rafraîchissement de la page
+useEffect(() => {
+  handleDeleteFilters(); // Réinitialiser les filtres au chargement de la page
+}, []); // Le tableau vide [] signifie que l'effet ne se déclenche qu'une fois, au premier montage
   const handleAddToCart = (product) => {
     // console.log("product ",product)
     const cartItem = {
@@ -51,27 +54,38 @@ const Products = ({mockCategories,products}) => {
   const navigate = useNavigate();
 
   // Utilisez useEffect pour mettre à jour l'état en fonction des paramètres de l'URL
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const trieValue = queryParams.get('trie');
-    if (trieValue) {
-      setSelectedOption(trieValue);
-    }
-  }, [location.search]); // Re-exécuter lorsque l'URL change
-
-  const handleSelection = (option) => {
-    setSelectedOption(option);
-    // Rediriger l'utilisateur avec le paramètre "trie" mis à jour
-    navigate(`/products/?trie=${option}`);
-  };
+  
 
 
   const [categoryVal, setCategoryVal] = useState([]); // Catégories sélectionnées
   const [subcategory, setSubcategory] = useState([]); // Sous-catégories à afficher
   const [selectSubcategory, setSelectSubcategory] = useState([]); // Sous-catégories sélectionnées
   
-  const [selectedCategories, setSelectedCategories] = useState([]); // Tableau pour stocker les catégories sélectionnées
+// Récupère le nom de la catégorie depuis l'état passé dans le lien
+const { categoryName } = location.state || {};  
+const { subCategoryName } = location.state || {};  
 
+// État pour les catégories sélectionnées
+const [selectedCategories, setSelectedCategories] = useState([]);
+
+// Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
+useEffect(() => {
+  if (categoryName && !selectedCategories.includes(categoryName)) {
+    setSelectedCategories((prevCategories) => [...prevCategories, categoryName]);
+  }
+  console.log("selectedCategories",selectedCategories)
+  console.log("categoryName",categoryName)
+
+}, [categoryName]);
+// Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
+useEffect(() => {
+  if (subCategoryName && !selectedCategories.includes(subCategoryName)) {
+    setSelectSubcategory((prevSubCategories) => [...prevSubCategories, subCategoryName]);
+  }
+  console.log("selectedSubCategories",selectSubcategory)
+  console.log("subCategoryName",subCategoryName)
+
+}, [subCategoryName]);
 const handleCategorySelect = (categoryName) => {
   setSelectedCategories((prevSelectedCategories) => {
     if (prevSelectedCategories.includes(categoryName)) {
@@ -180,8 +194,56 @@ const handleDeleteFilters=()=>{
   setMinPrice('')
   setMaxPrice('')
   setSelectedRatings([])
-
+  setFilteredProducts([])
 }
+
+
+useEffect(() => {
+  const queryParams = new URLSearchParams(location.search);
+  const trieValue = queryParams.get('trie');
+  if (trieValue) {
+    setSelectedOption(trieValue);
+  }
+}, [location.search]); // Re-exécuter lorsque l'URL change
+
+const handleSelection = (option) => {
+  setSelectedOption(option);
+  // Rediriger l'utilisateur avec le paramètre "trie" mis à jour
+  navigate(`/products/?trie=${option}`);
+};
+const [sortedProducts, setSortedProducts] = useState(filteredProducts);
+
+useEffect(() => {
+  // Fonction de tri en fonction de l'option sélectionnée
+  const sortProducts = (option) => {
+    let sorted = [...filteredProducts]; // Crée une copie des produits pour ne pas les modifier directement
+
+    switch (option) {
+      case 'bestSellers':
+        sorted = sorted.sort((a, b) => b.Sales - a.Sales); // Trier par ventes
+        break;
+      case 'topRated':
+        sorted = sorted.sort((a, b) => b.Rating - a.Rating); // Trier par note (Rating)
+        break;
+      case 'newest':
+        sorted = sorted.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt)); // Trier par date de création
+        break;
+      default:
+        break;
+    }
+
+    setSortedProducts(sorted); // Met à jour les produits triés
+    setFilteredProducts(sorted); // Met à jour filteredProducts avec les produits triés
+    console.log("sorted inside effect:", sorted); // Affiche directement la valeur triée ici
+  };
+
+  // Appelle la fonction de tri à chaque changement d'option
+  if (selectedOption) {
+    sortProducts(selectedOption);
+  }
+}, [selectedOption]); // Re-exécuter lorsque selectedOption ou filteredProducts changent
+
+
   return (
     <section className="bg-white  antialiased dark:bg-gray-900 ">
   <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -218,7 +280,7 @@ const handleDeleteFilters=()=>{
                                 <p onClick={(e) => handleDeleteFilters(e)} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
                             </div>
                         </div>
-                        <div className="pt-3 pb-2">
+                        {/* <div className="pt-3 pb-2">
                             <label for="input-group-search" className="sr-only">Rechercher</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -228,7 +290,7 @@ const handleDeleteFilters=()=>{
                                 </div>
                                 <input type="text" id="input-group-search" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Recherche..."/>
                             </div>
-                        </div>
+                        </div> */}
                         <div id="accordion-flush" data-accordion="collapse" data-active-classes="text-black dark:text-white" data-inactive-classes="text-gray-500 dark:text-gray-400">
                             
                             
@@ -577,6 +639,12 @@ const handleDeleteFilters=()=>{
                     {/* DropDown Menu Trier */}
                     {trier &&
                         <div id="dropdownSort1" className="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800" data-popper-placement="bottom">
+                        <div className="flex items-center justify-between pt-2">
+                            <h6 className="text-sm font-medium text-black dark:text-white">Trier</h6>
+                            {/* <div className="flex items-center space-x-3">
+                                <p onClick={(e)=>handleDeleteTrier} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
+                            </div> */}
+                        </div>
                         <ul className="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="sortDropdownButton">
                         <li className={` cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
               selectedOption === 'bestSellers' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
@@ -602,6 +670,8 @@ const handleDeleteFilters=()=>{
             Dernières nouveautés
          
         </li>
+
+        
                             
                         </ul>
                         </div>
@@ -612,8 +682,9 @@ const handleDeleteFilters=()=>{
                
       </div>
     </div>
-    <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-5">
-    {filteredProducts.map((product) => (
+    <div className="">
+      {filteredProducts.length>0? (
+        filteredProducts.map((product) => (
           <div
             key={product.UID}
             className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
@@ -696,7 +767,7 @@ const handleDeleteFilters=()=>{
   : `${product.Description.slice(0, 100)}...`}
               </p> */}
               <ul className="mt-2 flex items-center gap-4">
-            <li className="flex items-center gap-2">
+              {product.Order>10 && (<li className="flex items-center gap-2">
               <svg className="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path
                   stroke="currentColor"
@@ -707,14 +778,15 @@ const handleDeleteFilters=()=>{
                 />
               </svg>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Meilleure Vente</p>
-            </li>
-
-            <li className="flex items-center gap-2">
+            </li>)}
+            
+            {(Math.round(((product.OldPrice - product.Price) * 100) / product.OldPrice)>20)&& (<li className="flex items-center gap-2">
               <svg className="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 7V6c0-.6.4-1 1-1h11c.6 0 1 .4 1 1v7c0 .6-.4 1-1 1h-1M3 18v-7c0-.6.4-1 1-1h11c.6 0 1 .4 1 1v7c0 .6-.4 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
               </svg>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Meilleur Prix</p>
-            </li>
+            </li>)}
+            
           </ul>
               <div className="mt-4 flex items-center justify-between">
                 <div>
@@ -743,7 +815,17 @@ const handleDeleteFilters=()=>{
               </div>
             </div>
           </div>
-        ))}
+        ))):
+        (
+          <div className="flex flex-col items-center justify-center min-h-[200px] bg-gray-50 p-6 rounded-lg shadow-md dark:bg-gray-800">
+          <h1 className="text-2xl font-semibold text-[#011d28] dark:text-gray-200 mb-4">
+            Cette catégorie est encore vide, mais votre curiosité est une belle qualité !
+          </h1>
+          <p className="text-[#011d28e6] dark:text-gray-400 text-center">
+            Revenez prochainement pour découvrir nos nouveautés. Nous travaillons dur pour vous offrir de superbes produits !
+          </p>
+        </div>
+        )}
       
       
     </div>

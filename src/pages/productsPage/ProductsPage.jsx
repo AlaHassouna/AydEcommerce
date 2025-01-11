@@ -14,8 +14,8 @@ const ProductsPage = () => {
         "Animes",
         "Jeux vidéo",
         "Art abstrait",
-        "Humour",
-        "Minimaliste"
+        "Polo T-Shirts",
+        "Casual"
       ],
       Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     },
@@ -27,10 +27,46 @@ const ProductsPage = () => {
         "Films",
         "Animes",
         "Streetwear",
-        "Vintage",
+        "Casual",
         "Saisonnier"
       ],
       Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 8,
+      Name: "Sweaters",
+      SubCategory: [
+        "Cartoons",
+        "Films",
+        "Streetwear",
+        "Vintage",
+        "Saisonnier",
+        "Casual"
+      ],
+      Icon: "https://images.pexels.com/photos/2613261/pexels-photo-2613261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 10,  // ID unique pour cette catégorie
+      Name: "Survêtements",  // Nom de la catégorie
+      SubCategory: [
+        "Casual",
+        "Sport",
+        "Streetwear",
+        "Saisonnier"
+      ],  // Sous-catégories possibles pour les tracksuits
+      Icon: "https://images.pexels.com/photos/26664909/pexels-photo-26664909/free-photo-of-les-moments.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
+    },
+    
+    {
+      id: 7,  // ID unique pour cette catégorie
+      Name: "Pantalons",  // Nom de la catégorie
+      SubCategory: [
+        "Jeans",
+        "Chinos",
+        "Jogging",
+        "Formel"
+      ],  // Sous-catégories
+      Icon: "https://images.pexels.com/photos/1895943/pexels-photo-1895943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
     },
     {
       id: 3,
@@ -39,19 +75,31 @@ const ProductsPage = () => {
         "Films",
         "Animes",
         "Logos",
-        "Minimaliste",
+        "Casual",
+        "Formel",
         "Détail graphique"
       ],
       Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 9,
+      Name: "Shorts",
+      SubCategory: [
+        "Casual",
+        "Sport",
+        "Vintage",
+        "Saisonnier",
+        "Streetwear"
+      ],
+      Icon: "https://images.pexels.com/photos/18394309/pexels-photo-18394309/free-photo-of-portrait-d-un-jeune-garcon-avec-une-silhouette-sombre-contre-le-mur.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     },
     {
       id: 4,
       Name: "Jupes",
       subCategorie: [
         "Motifs floraux",
-        "Minimaliste",
-        "Thème animé",
-        "Art abstrait"
+        "Casual",
+        
       ],
       Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     },
@@ -59,23 +107,39 @@ const ProductsPage = () => {
       id: 5,
       Name: "Robes",
       subCategorie: [
-        "Casual animé",
+        "Casual",
         "Élégance minimaliste",
         "Saisonnière",
         "Art moderne"
       ],
       Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     },
+    // {
+    //   id: 6,
+    //   Name: "Chemises",
+    //   SubCategory: [
+    //     "Films et séries",
+    //     "Art graphique",
+    //     "Thème cartoon",
+    //     "Vintage"
+    //   ],
+    //   Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+    // },
+    
+    
+    
+    
     {
-      id: 6,
-      Name: "Chemises",
-      SubCategory: [
-        "Films et séries",
-        "Art graphique",
-        "Thème cartoon",
-        "Vintage"
+      id: 10,
+      Name: "Accessoires",
+      subCategorie: [
+        "Écharpes",
+        "Chapeaux",
+        "Gants",
+        "Bijoux",
+        "Sacs à main"
       ],
-      Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+      Icon: "https://images.pexels.com/photos/30076369/pexels-photo-30076369.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     }
   ]
       const products = [
@@ -84,7 +148,7 @@ const ProductsPage = () => {
             Product: "T-shirt",
             Description: "Un T-shirt classique et confortable, parfait pour toutes les occasions décontractées. Fabriqué en coton doux pour un confort optimal toute la journée.",
             Category: "T-Shirts",
-            SubCategory: "Films",
+            SubCategory: "Casual",
             Brand: "AYD",
             OldPrice: 35.00,
             Price: 19.99,
@@ -139,8 +203,8 @@ const ProductsPage = () => {
             UID: "C002",
             Product: "Jeans",
             Description: "Un jean robuste et tendance, parfait pour compléter n'importe quelle tenue. Conçu pour durer et offrir un style intemporel.",
-            Category: "Bottoms",
-            SubCategory: "Denim",
+            Category: "Pantalons",
+            SubCategory: "Jeans",
             Brand: "AYD",
             OldPrice: 65.00,
             Price: 49.99,
@@ -173,8 +237,8 @@ const ProductsPage = () => {
             UID: "C003",
             Product: "Jacket",
             Description: "Une veste élégante et chaude pour affronter les jours les plus froids avec style. Matériau imperméable et coupe-vent.",
-            Category: "T-Shirts",
-            SubCategory: "Cartoons",
+            Category: "Vestes",
+            SubCategory: "Minimaliste",
             Brand: "AYD",
             OldPrice: 105.00,
             Price: 89.99,
@@ -207,8 +271,8 @@ const ProductsPage = () => {
           UID: "C004",
           Product: "Dress",
           Description: "Elegant and stylish evening wear designed to make a statement at any formal or semi-formal occasion. Made from premium fabrics to ensure comfort and sophistication.",
-          Category: "Dresses",
-          SubCategory: "Evening Wear",
+          Category: "Robes",
+          SubCategory: "Casual",
           Brand: "AYD",
           OldPrice: 95.00,
           Price: 69.99,
@@ -259,7 +323,7 @@ const ProductsPage = () => {
           UID: "C005",
           Product: "Sweater",
           Description: "Cozy and warm knitwear sweater perfect for chilly days. Its versatile design makes it suitable for casual outings or relaxed office wear.",
-          Category: "Tops",
+          Category: "Sweaters",
           SubCategory: "Knitwear",
           Brand: "AYD",
           OldPrice: 39.99,
@@ -311,8 +375,8 @@ const ProductsPage = () => {
           UID: "C006",
           Product: "Shorts",
           Description: "Lightweight and comfortable shorts designed for casual and outdoor activities. Crafted from durable materials to ensure longevity.",
-          Category: "Bottoms",
-          SubCategory: "Casual Wear",
+          Category: "Shorts",
+          SubCategory: "Saisonnier",
           Brand: "AYD",
           OldPrice: 45.99,
           Price: 24.99,
@@ -363,8 +427,8 @@ const ProductsPage = () => {
           UID: "C007",
           Product: "Skirt",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Bottoms",
-          SubCategory: "Office Wear",
+          Category: "Jupes",
+          SubCategory: "Casual",
           Brand: "AYD",
           OldPrice: 45.00,
           Price: 29.99,
@@ -415,8 +479,8 @@ const ProductsPage = () => {
           UID: "C008",
           Product: "Hoodie",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Outerwear",
-          SubCategory: "Casual Wear",
+          Category: "Hoodies",
+          SubCategory: "Casual",
           Brand: "AYD",
           OldPrice: 49.99,
           Price: 49.99,
@@ -467,8 +531,8 @@ const ProductsPage = () => {
           UID: "C009",
           Product: "Polo Shirt",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Tops",
-          SubCategory: "Smart Casual",
+          Category: "T-Shirts",
+          SubCategory: "Polo T-Shirts",
           Brand: "AYD",
           OldPrice: 34.99,
           Price: 34.99,
@@ -519,8 +583,8 @@ const ProductsPage = () => {
           UID: "C010",
           Product: "Blazer",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Outerwear",
-          SubCategory: "Formal Wear",
+          Category: "Vestes",
+          SubCategory: "Formel",
           Brand: "AYD",
           OldPrice: 115.00,
           Price: 99.99,
@@ -572,8 +636,8 @@ const ProductsPage = () => {
           UID: "C011",
           Product: "Tracksuit",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Activewear",
-          SubCategory: "Sportswear",
+          Category: "Survêtements",
+          SubCategory: "Sport",
           Brand: "AYD",
           OldPrice: 75.00,
           Price: 59.99,
@@ -624,8 +688,8 @@ const ProductsPage = () => {
           UID: "C012",
           Product: "Scarf",
           Description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui ipsa pariatur eius illum numquam sed vitae modi, vel impedit amet officia provident in facere! Reiciendis ratione impedit eligendi amet laudantium?",
-          Category: "Accessories",
-          SubCategory: "Winter Accessories",
+          Category: "Accessoires",
+          SubCategory: "Écharpes",
           Brand: "AYD",
           OldPrice: 14.99,
           Price: 14.99,
