@@ -486,17 +486,17 @@ const handleDecrement = (index) => {
                                 {/* Adresse complète */}
                                 <div className="col-span-2">
                                     <label for="adresse" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse complète </label>
-                                    <input type="tel" name="adresse" id="adresse" value={order.adresse} onChange={(e)=>setOrder({...order,adresse:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Adresse complète" required=""/>
+                                    <input type="text" name="adresse" id="adresse" value={order.adresse} onChange={(e)=>setOrder({...order,adresse:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Adresse complète" required=""/>
                                 </div>
                                 {/* Téléphone */}
                                 <div className="col-span-2">
                                     <label for="telephone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone</label>
-                                    <input type="text" name="telephone" id="telephone" value={order.phone1} onChange={(e)=>setOrder({...order,phone1:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Téléphone" required=""/>
+                                    <input type="tel" name="telephone" id="telephone" value={order.phone1} onChange={(e)=>setOrder({...order,phone1:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Téléphone" required=""/>
                                 </div>
                                  {/* Téléphone 2*/}
                                  <div className="col-span-2">
                                     <label for="telephone2" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone 2(optionnel)</label>
-                                    <input type="text" name="telephone2" id="telephone2" value={order.phone2} onChange={(e)=>setOrder({...order,phone2:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Téléphone 2" required=""/>
+                                    <input type="tel" name="telephone2" id="telephone2" value={order.phone2} onChange={(e)=>setOrder({...order,phone2:e.target.value})} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Téléphone 2" required=""/>
                                 </div>
                                 
                               <div className="col-span-2">

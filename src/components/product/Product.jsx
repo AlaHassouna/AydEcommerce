@@ -156,7 +156,7 @@ useEffect(() => {
    : [];
    const [zoomStyle, setZoomStyle] = useState({
     backgroundPosition: 'center',
-    backgroundSize: '60%', // Taille du zoom
+    backgroundSize: '100%', // Taille du zoom
   });
 
   // Fonction pour gérer le zoom basé sur la position du curseur
@@ -179,7 +179,7 @@ useEffect(() => {
   const handleMouseLeave = () => {
     setZoomStyle({
       backgroundPosition: 'center',
-      backgroundSize: '60%', // Retour à la taille normale
+      backgroundSize: '100%', // Retour à la taille normale
     });
   };
   return (
@@ -194,7 +194,7 @@ useEffect(() => {
                       onMouseMove={handleMouseMove}
                       onMouseLeave={handleMouseLeave}
                       style={{
-                        height: '400px', // Vous pouvez ajuster la taille selon vos besoins
+                        
                         backgroundImage: `url(${selectedImage})`,
                         backgroundPosition: zoomStyle.backgroundPosition,
                         backgroundSize: zoomStyle.backgroundSize,
