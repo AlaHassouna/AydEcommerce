@@ -6,6 +6,7 @@ import Cateogries from '../../components/categories/Cateogries'
 import CategorySearch from '../../components/categorySearch/CategorySearch'
 import Products from '../../components/products/Products'
 import Footer from '../../components/footer/Footer'
+import { Link } from 'react-router-dom'
 // import axios from 'axios';
 
 
@@ -1118,16 +1119,17 @@ const hotProduct =
       <div class=" h-auto mb-4 "  >
         <Carousel />
       </div>         
-      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 lg:gap-4 mb-4 ">
+      <div className="grid grid-cols-1 md:grid-cols-1  lg:grid-cols-4 gap-0 lg:gap-4 mb-4 ">
           {/* Image Section */}
           
-          <div className="flex justify-center items-center rounded-lg dark:border-gray-600 h-[300px] sm:h-[400px] lg:h-full w-full">
-              <img
-                src="https://images.pexels.com/photos/1721558/pexels-photo-1721558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                className="rounded-lg h-full md:w-full w-auto object-cover shadow-xl z-10"
-                alt=""
-              />
-            </div>
+          <div className="flex justify-center items-center rounded-lg dark:border-gray-600 h-[300px] lg:h-full w-full">
+          <img
+            src="https://images.pexels.com/photos/1721558/pexels-photo-1721558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            className="rounded-lg h-full w-full object-cover shadow-xl z-10"
+            alt=""
+          />
+        </div>
+            
           {/* Content Section */}
           <div className="rounded-lg col-span-3 h-full ">
             {/* Header Section */}
@@ -1141,8 +1143,8 @@ const hotProduct =
                 </p>
               </div>
 
-              <button
-                type="button"
+              <Link
+                to="/products/?trie=bestSellers"
                 className="py-2 px-4 sm:py-2.5 sm:px-5 text-xs sm:text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 flex items-center gap-2 mt-4 sm:mt-0"
               >
                 Voir tout
@@ -1163,7 +1165,7 @@ const hotProduct =
                     d="M19 12H5m14 0-4 4m4-4-4-4"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
 
             {/* Best Sellers Component */}
@@ -1216,8 +1218,8 @@ const hotProduct =
                 </p>
               </div>
 
-              <button
-                type="button"
+              <Link
+                to="products/?trie=topRated"
                 className="py-2 px-4 sm:py-2.5 sm:px-5 text-xs sm:text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 flex items-center gap-2 mt-4 sm:mt-0"
               >
                 Voir tout
@@ -1238,7 +1240,7 @@ const hotProduct =
                     d="M19 12H5m14 0-4 4m4-4-4-4"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
 
             {/* Best Sellers Component */}
@@ -1262,8 +1264,8 @@ const hotProduct =
                 </p>
               </div>
 
-              <button
-                type="button"
+              <Link
+                to="/products/?trie=newest"
                 className="py-2 px-4 sm:py-2.5 sm:px-5 text-xs sm:text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 flex items-center gap-2 mt-4 sm:mt-0"
               >
                 Voir tout
@@ -1284,7 +1286,7 @@ const hotProduct =
                     d="M19 12H5m14 0-4 4m4-4-4-4"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
 
             {/* Best Sellers Component */}

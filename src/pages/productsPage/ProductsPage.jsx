@@ -4,14 +4,80 @@ import Products from '../../components/products/Products';
 
 // import Products 
 const ProductsPage = () => {
-    const mockCategories = [
-        { id: 1, Name: 'T-Shirts', Icon: 'https://cdn-icons-png.flaticon.com/512/79/79693.png' },
-        { id: 2, Name: 'Jeans', Icon: 'https://cdn-icons-png.flaticon.com/512/664/664466.png' },
-        { id: 3, Name: 'Shoes', Icon: 'https://cdn-icons-png.flaticon.com/512/6000/6000380.png' },
-        { id: 4, Name: 'Jackets', Icon: 'https://cdn-icons-png.flaticon.com/512/3531/3531671.png' },
-        { id: 5, Name: 'Accessories', Icon: 'https://cdn-icons-png.flaticon.com/512/7695/7695937.png' },
-        { id: 6, Name: 'Hats', Icon: 'https://cdn-icons-png.flaticon.com/512/864/864744.png' },
-      ];
+  const mockCategories= [
+    {
+      id: 1,
+      Name: "T-Shirts",
+      subCategorie: [
+        "Cartoons",
+        "Films",
+        "Animes",
+        "Jeux vidéo",
+        "Art abstrait",
+        "Humour",
+        "Minimaliste"
+      ],
+      Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 2,
+      Name: "Hoodies",
+      subCategorie: [
+        "Cartoons",
+        "Films",
+        "Animes",
+        "Streetwear",
+        "Vintage",
+        "Saisonnier"
+      ],
+      Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 3,
+      Name: "Vestes",
+      subCategorie: [
+        "Films",
+        "Animes",
+        "Logos",
+        "Minimaliste",
+        "Détail graphique"
+      ],
+      Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 4,
+      Name: "Jupes",
+      subCategorie: [
+        "Motifs floraux",
+        "Minimaliste",
+        "Thème animé",
+        "Art abstrait"
+      ],
+      Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 5,
+      Name: "Robes",
+      subCategorie: [
+        "Casual animé",
+        "Élégance minimaliste",
+        "Saisonnière",
+        "Art moderne"
+      ],
+      Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      id: 6,
+      Name: "Chemises",
+      SubCategory: [
+        "Films et séries",
+        "Art graphique",
+        "Thème cartoon",
+        "Vintage"
+      ],
+      Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+    }
+  ]
       const products = [
         {
             UID: "C001",
@@ -656,47 +722,90 @@ const ProductsPage = () => {
       // Vous pouvez exécuter une logique supplémentaire ici
     }
   }, [products]);
-  
+  const [openCategoryId, setOpenCategoryId] = useState(null);
+
+  const toggleCategory = (id) => {
+    setOpenCategoryId(openCategoryId === id ? null : id);
+  };
+  useEffect(() => {
+    // Forcer le scroll au top lors de l'ouverture du composant
+    window.scrollTo(0, 0);
+  }, []); // Le tableau vide garantit que cela ne se produit qu'une seule fois, lors du montage du composant
+
     return (
     <main class="h-auto pt-5">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div
-                class="rounded-lg  h-full"
-                >
-                   <aside
-  id="default-sidebar"
-  className="hidden lg:block z-40 transition-transform"
-  aria-label="Sidenav"
->
-  <div className="overflow-y-auto px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-    <ul className="space-y-2">
-      {mockCategories.map((category) => (
-        <li key={category.id}>
-          <a
-            href="#"
-            className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-          >
-            <img
-              src={category.Icon}
-              alt={category.Name}
-              className="w-6 h-6 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-            />
-            <span className="ml-3">{category.Name}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
-</aside>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 mb-4">
+                          <div
+                          class="rounded-lg  h-full"
+                          >
+                              {/* <aside
+                                  id="default-sidebar"
+                                  className="hidden lg:block z-40 transition-transform"
+                                  aria-label="Sidenav"
+                                >
+                                            <div className="overflow-y-auto px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                                                  <ul className="space-y-2">
+                                                    {mockCategories.map((category) => (
+                                                      <li key={category.id}>
+                                                        <button
+                                                          onClick={() => toggleCategory(category.id)}
+                                                          className="flex items-center justify-between w-full p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        >
+                                                          <span className="ml-3">{category.Name}</span>
+                                                          {category.subCategorie?.length > 0 && (
+                                                            <svg
+                                                              className={`ml-2 w-[16px] h-[16px] text-gray-800 dark:text-white transition-transform duration-300 ${
+                                                                openCategoryId === category.id ? "rotate-180" : "rotate-0"
+                                                              }`}
+                                                              xmlns="http://www.w3.org/2000/svg"
+                                                              width="24"
+                                                              height="24"
+                                                              fill="none"
+                                                              viewBox="0 0 24 24"
+                                                            >
+                                                              <path
+                                                                stroke="currentColor"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="m19 9-7 7-7-7"
+                                                              />
+                                                            </svg>
+                                                          )}
+                                                        </button>
 
+                                                        {openCategoryId === category.id && (
+                                                          <ul className="mt-2 space-y-3 pl-6 m-4">
+                                                          {category.subCategorie.map((sub, index) => (
+                                                            <li
+                                                              key={index}
+                                                              className="cursor-pointer text-gray-700 dark:text-gray-300 hover:font-medium hover:text-gray-900 dark:hover:text-white transition-colors"
+                                                            >
+                                                              {sub}
+                                                            </li>
+                                                          ))}
+                                                        </ul>
+                                                        )}
+                                                      </li>
+                                                    ))}
+                                                  </ul>
+                                            </div>
+                              </aside> */}
+
+                          </div>
+
+                          <div
+                          class="px-4  w-full relative h-[300px] overflow-hidden rounded-lg rounded-t-none"
+                          >
+                              <img src="https://marketplace.canva.com/EAE8VK9OL2s/1/0/1600w/canva-4q0cOBFil-w.jpg" 
+                              alt="" className='rounded-lg h-full w-full object-cover shadow-xl z-10'/>
+                          </div>
+                          <div
+                          class="rounded-lg   h-full">
+                              <Products mockCategories={mockCategories} products={products}/>
+                          </div>
+                          
                 </div>
-                <div
-                class="rounded-lg col-span-3  h-full"
-                >
-                    <Products mockCategories={mockCategories} products={products}/>
-                 </div>
-                
-      </div>
       
     </main>
   )

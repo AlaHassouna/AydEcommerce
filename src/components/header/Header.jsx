@@ -171,17 +171,20 @@ const mockCategories= [
                  {account && 
                  <div id="userDropdown1" class="right-0 absolute z-10 w-56 divide-y divide-gray-100 overflow-hidden overflow-y-auto rounded-lg bg-white antialiased shadow dark:divide-gray-600 dark:bg-gray-700">
                    <ul class="p-2 text-start text-sm font-medium text-gray-900 dark:text-white">
-                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Account </a></li>
-                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Orders </a></li>
+                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Profil</a></li>
+                     {/* <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Orders </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Settings </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Favourites </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Delivery Addresses </a></li>
-                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Billing Data </a></li>
+                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Billing Data </a></li> */}
+                   
+                     <button onClick={()=>context.setIsLogin(!context.isLogin)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
+                   
                    </ul>
                
-                   <div class="p-2 text-sm font-medium text-gray-900 dark:text-white">
+                   {/* <div class="p-2 text-sm font-medium text-gray-900 dark:text-white">
                      <button onClick={()=>context.setIsLogin(!context.isLogin)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
-                   </div>
+                   </div> */}
                  </div>
                }
                </div> }
@@ -523,8 +526,8 @@ const mockCategories= [
   </li>
   <li className="mt-2 lg:mt-0">
     <Link
-      href="#"
-      title="Nouveautés"
+      to="/products/?trie=newest"
+     
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
     >
       Nouveautés
@@ -532,20 +535,20 @@ const mockCategories= [
   </li>
   <li className="mt-2 lg:mt-0">
     <Link
-      href="#"
-      title="Promotion"
+      to="/products/?trie=topRated"
+      
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
     >
-      Promotion
+      Meilleures évaluations
     </Link>
   </li>
   <li className="mt-2 lg:mt-0">
     <Link
-      href="#"
-      title="Gift card"
+      to="/products/?trie=bestSellers"
+      
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
     >
-      Gift card
+      Bestsellers
     </Link>
   </li>
   <li className="mt-2 lg:mt-0">

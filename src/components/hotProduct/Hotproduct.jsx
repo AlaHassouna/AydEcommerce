@@ -36,7 +36,7 @@ const Hotproduct = ({ hotProduct }) => {
   return (
    
 
-<Link to={`/hotProduct/${hotProduct.UID}`} state={{ hotProduct }}>
+<Link to={`/product/${hotProduct.UID}`} state={{ hotProduct }}>
   <section className="bg-white border border-gray-200 dark:bg-gray-900 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-3xl"
   style={{
       backgroundImage: 'linear-gradient(#ffffff, #fff0f0)',

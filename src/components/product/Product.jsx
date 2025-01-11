@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Rating from './rating/Rating';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { MyContext } from '../../App';
 // onClick={context.addToCart(product,selectedSize,selectedColor)}
 import { useParams } from 'react-router-dom'; 
@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 
 
 const Product = () => {
+
   const { addToCart } = useContext(MyContext);
   const { id } = useParams();// Récupère l'ID depuis l'URL
   // const [product, setProduct] = useState(); // État pour les données du produit
@@ -33,7 +34,16 @@ const Product = () => {
 // }, [id]); // Dependency array ensures the effect runs when `id` changes
 
 const location = useLocation();
-const product = location.state?.product;
+const product = location.state?.product || location.state?.hotProduct;
+const navigate = useNavigate();
+
+  const handleAddToCartAndRedirect = () => {
+    // Ajouter le produit au panier (utilisez la fonction existante)
+    handleAddToCart();
+
+    // Rediriger vers la page de commande
+    navigate('/checkout'); // Remplacez '/checkout' par l'URL de votre page de commande
+  };
 console.log("product",product)
 
 const [quantity, setQuantity] = useState(1);
@@ -46,34 +56,63 @@ useEffect(() => {
   // Se déplace en haut de la page lorsque le composant est monté
 
 }, [selectedColor]);
+const [showNotification, setShowNotification] = useState(false);
+const [progress, setProgress] = useState(0);
 useEffect(() => {
-// Assurez-vous que product est défini avant d'accéder aux propriétés
-if (product && product.Image && product.Image.length > 0) {
-  setSelectedImage(product.Image[0]);
-}
+  if (showNotification) {
+    let timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          clearInterval(timer);
+          setShowNotification(false);
+          return 100;
+        }
+        return Math.min(oldProgress + 1, 100);
+      });
+    }, 30); // La barre progresse toutes les 30ms
 
-// Vérifiez également les propriétés pour éviter des erreurs si product ou variants n'est pas défini
-if (product && product.Variants && product.Variants.length > 0) {
-  setSelectedColor(product.Variants[0]?.Colors[0]?.Color);
-  setSelectedSize(product.Variants[0]?.Size);
-}
-}, [product]);
-console.log("product ",product)
-  const handleAddToCart = () => {
-    // console.log("product ",product)
-    const cartItem = {
-      id: product?.UID,
-      name: product?.Product,
-      price: product?.Price,
-      image: selectedImage, // Ajout de l'image sélectionnée
-      size: selectedSize,
-      color: selectedColor,
-      quantity: quantity,
-      OldPrice: product?.OldPrice,
-        };
-    // console.log("cartItem ",cartItem)
+    // Cache la notification après 3 secondes
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+    setProgress(0);
+  }
+}, [showNotification]);
+useEffect(() => {
+        // Assurez-vous que product est défini avant d'accéder aux propriétés
+        if (product && product.Image && product.Image.length > 0) {
+          setSelectedImage(product.Image[0]);
+        }
 
-    addToCart(cartItem); // Appel de la méthode addToCart avec l'élément du panier
+        // Vérifiez également les propriétés pour éviter des erreurs si product ou variants n'est pas défini
+        if (product && product.Variants && product.Variants.length > 0) {
+          setSelectedColor(product.Variants[0]?.Colors[0]?.Color);
+          setSelectedSize(product.Variants[0]?.Size);
+        }
+        }, [product]);
+        console.log("product ",product)
+          const handleAddToCart = () => {
+            // console.log("product ",product)
+            const cartItem = {
+              id: product?.UID,
+              name: product?.Product,
+              price: product?.Price,
+              image: selectedImage, // Ajout de l'image sélectionnée
+              size: selectedSize,
+              color: selectedColor,
+              quantity: quantity,
+              OldPrice: product?.OldPrice,
+                };
+            // console.log("cartItem ",cartItem)
+
+            addToCart(cartItem); // Appel de la méthode addToCart avec l'élément du panier
+             // Affiche la notification
+    setShowNotification(true);
+
+    // Cache la notification après 3 secondes
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
   };
   useEffect(() => {
     
@@ -117,7 +156,7 @@ console.log("product ",product)
    : [];
    const [zoomStyle, setZoomStyle] = useState({
     backgroundPosition: 'center',
-    backgroundSize: '80%', // Taille du zoom
+    backgroundSize: '60%', // Taille du zoom
   });
 
   // Fonction pour gérer le zoom basé sur la position du curseur
@@ -140,7 +179,7 @@ console.log("product ",product)
   const handleMouseLeave = () => {
     setZoomStyle({
       backgroundPosition: 'center',
-      backgroundSize: '80%', // Retour à la taille normale
+      backgroundSize: '60%', // Retour à la taille normale
     });
   };
   return (
@@ -336,8 +375,38 @@ console.log("product ",product)
                                         stroke="" stroke-width="1.6" stroke-linecap="round" />
                                 </svg>
                                 Add to cart</button>
+                                {showNotification && (
+  <div
+    className="fixed z-10 top-4 right-4 bg-gradient-to-r from-[#011d28]  to-[#065875e6] text-white py-4 px-6 rounded-lg shadow-xl transform transition-all duration-500 ease-in-out w-72" // Réduction de la largeur
+    style={{
+      opacity: showNotification ? 1 : 0,
+      transform: showNotification ? 'translateY(0)' : 'translateY(-20px)',
+    }}
+  >
+    {/* Progress Bar */}
+    <div className="w-full bg-[#011d28] rounded-full h-2 mt-2 overflow-hidden">
+      <div
+        className="bg-gradient-to-r from-[#023b52] to-[#3e6d7ee6] h-2 rounded-full shadow-lg"
+        style={{
+          width: `${progress}%`,
+          transition: 'width 0.03s ease-out', // Smooth transition
+        }}
+      ></div>
+    </div>
+    
+    <div className="flex flex-col items-center space-y-1 mt-3">
+  <span className="text-sm font-semibold text-center tracking-wide">
+    C'est dans le panier !
+  </span>
+  <span className="text-xs font-normal text-center tracking-wide">
+    Vous êtes à un pas de faire des merveilles.
+  </span>
+</div>
+  </div>
+)}
+
                         </div>
-                        <button
+                        <button onClick={handleAddToCartAndRedirect}
                             class="text-center w-full px-5 py-4 rounded-[100px] bg-[#011d28] flex items-center justify-center font-semibold text-lg text-white shadow-sm shadow-transparent transition-all duration-500 hover:bg-[#011d28e6] hover:shadow-indigo-300">
                             Acheter maintenant
                         </button>
