@@ -1,16 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import logo from '../../assets/images/logo1.png';
 import logoWhite from '../../assets/images/logowhite.png';
 import { Link } from 'react-router-dom';
 import { MyContext } from '../../App';
-
+import axios from 'axios';
 
 const Header = () => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+
   const context= useContext(MyContext)
   const { panier } = useContext(MyContext);
   const { setPanier } = useContext(MyContext);
-  console.log("panier ",panier)
-  console.log("panier.length ",panier.length)
+  // console.log("panier ",panier)
+  // console.log("panier.length ",panier.length)
   const [cart, setCart] = useState(false);
   const [account, setAccount] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -46,144 +48,167 @@ const Header = () => {
 //     { Name: "Accessoires", subCategorie: ["Sacs", "Chapeaux", "Écharpes"] },
    
 // ];
-const mockCategories= [
-  {
-    id: 1,
-    Name: "T-Shirts",
-    subCategorie: [
-      "Cartoons",
-      "Films",
-      "Animes",
-      "Jeux vidéo",
-      "Art abstrait",
-      "Polo T-Shirts",
-      "Casual"
-    ],
-    Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 2,
-    Name: "Hoodies",
-    subCategorie: [
-      "Cartoons",
-      "Films",
-      "Animes",
-      "Streetwear",
-      "Casual",
-      "Saisonnier"
-    ],
-    Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 8,
-    Name: "Sweaters",
-    subCategorie: [
-      "Cartoons",
-      "Films",
-      "Streetwear",
-      "Vintage",
-      "Saisonnier",
-      "Casual"
-    ],
-    Icon: "https://images.pexels.com/photos/2613261/pexels-photo-2613261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 10,  // ID unique pour cette catégorie
-    Name: "Survêtements",  // Nom de la catégorie
-    subCategorie: [
-      "Casual",
-      "Sport",
-      "Streetwear",
-      "Saisonnier"
-    ],  // Sous-catégories possibles pour les tracksuits
-    Icon: "https://images.pexels.com/photos/26664909/pexels-photo-26664909/free-photo-of-les-moments.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
-  },
+// const mockCategories= [
+//   {
+//     id: 1,
+//     Name: "T-Shirts",
+//     subCategorie: [
+//       "Cartoons",
+//       "Films",
+//       "Animes",
+//       "Jeux vidéo",
+//       "Art abstrait",
+//       "Polo T-Shirts",
+//       "Casual"
+//     ],
+//     Icon: "https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 2,
+//     Name: "Hoodies",
+//     subCategorie: [
+//       "Cartoons",
+//       "Films",
+//       "Animes",
+//       "Streetwear",
+//       "Casual",
+//       "Saisonnier"
+//     ],
+//     Icon: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 8,
+//     Name: "Sweaters",
+//     subCategorie: [
+//       "Cartoons",
+//       "Films",
+//       "Streetwear",
+//       "Vintage",
+//       "Saisonnier",
+//       "Casual"
+//     ],
+//     Icon: "https://images.pexels.com/photos/2613261/pexels-photo-2613261.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 10,  // ID unique pour cette catégorie
+//     Name: "Survêtements",  // Nom de la catégorie
+//     subCategorie: [
+//       "Casual",
+//       "Sport",
+//       "Streetwear",
+//       "Saisonnier"
+//     ],  // Sous-catégories possibles pour les tracksuits
+//     Icon: "https://images.pexels.com/photos/26664909/pexels-photo-26664909/free-photo-of-les-moments.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
+//   },
   
-  {
-    id: 7,  // ID unique pour cette catégorie
-    Name: "Pantalons",  // Nom de la catégorie
-    subCategorie: [
-      "Jeans",
-      "Chinos",
-      "Jogging",
-      "Formel"
-    ],  // Sous-catégories
-    Icon: "https://images.pexels.com/photos/1895943/pexels-photo-1895943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
-  },
-  {
-    id: 3,
-    Name: "Vestes",
-    subCategorie: [
-      "Films",
-      "Animes",
-      "Logos",
-      "Casual",
-      "Formel",
-      "Détail graphique"
-    ],
-    Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 9,
-    Name: "Shorts",
-    subCategorie: [
-      "Casual",
-      "Sport",
-      "Vintage",
-      "Saisonnier",
-      "Streetwear"
-    ],
-    Icon: "https://images.pexels.com/photos/18394309/pexels-photo-18394309/free-photo-of-portrait-d-un-jeune-garcon-avec-une-silhouette-sombre-contre-le-mur.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 4,
-    Name: "Jupes",
-    subCategorie: [
-      "Motifs floraux",
-      "Casual",
+//   {
+//     id: 7,  // ID unique pour cette catégorie
+//     Name: "Pantalons",  // Nom de la catégorie
+//     subCategorie: [
+//       "Jeans",
+//       "Chinos",
+//       "Jogging",
+//       "Formel"
+//     ],  // Sous-catégories
+//     Icon: "https://images.pexels.com/photos/1895943/pexels-photo-1895943.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"  // Icône associée à la catégorie
+//   },
+//   {
+//     id: 3,
+//     Name: "Vestes",
+//     subCategorie: [
+//       "Films",
+//       "Animes",
+//       "Logos",
+//       "Casual",
+//       "Formel",
+//       "Détail graphique"
+//     ],
+//     Icon: "https://images.pexels.com/photos/16170/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 9,
+//     Name: "Shorts",
+//     subCategorie: [
+//       "Casual",
+//       "Sport",
+//       "Vintage",
+//       "Saisonnier",
+//       "Streetwear"
+//     ],
+//     Icon: "https://images.pexels.com/photos/18394309/pexels-photo-18394309/free-photo-of-portrait-d-un-jeune-garcon-avec-une-silhouette-sombre-contre-le-mur.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 4,
+//     Name: "Jupes",
+//     subCategorie: [
+//       "Motifs floraux",
+//       "Casual",
       
-    ],
-    Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  {
-    id: 5,
-    Name: "Robes",
-    subCategorie: [
-      "Casual",
-      "Élégance minimaliste",
-      "Saisonnière",
-      "Art moderne"
-    ],
-    Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  },
-  // {
-  //   id: 6,
-  //   Name: "Chemises",
-  //   SubCategory: [
-  //     "Films et séries",
-  //     "Art graphique",
-  //     "Thème cartoon",
-  //     "Vintage"
-  //   ],
-  //   Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
-  // },
+//     ],
+//     Icon: "https://images.pexels.com/photos/1007018/pexels-photo-1007018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   {
+//     id: 5,
+//     Name: "Robes",
+//     subCategorie: [
+//       "Casual",
+//       "Élégance minimaliste",
+//       "Saisonnière",
+//       "Art moderne"
+//     ],
+//     Icon: "https://images.pexels.com/photos/2065195/pexels-photo-2065195.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   },
+//   // {
+//   //   id: 6,
+//   //   Name: "Chemises",
+//   //   SubCategory: [
+//   //     "Films et séries",
+//   //     "Art graphique",
+//   //     "Thème cartoon",
+//   //     "Vintage"
+//   //   ],
+//   //   Icon: "https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg?auto=compress&cs=tinysrgb&w=400"
+//   // },
   
   
   
   
-  {
-    id: 10,
-    Name: "Accessoires",
-    subCategorie: [
-      "Écharpes",
-      "Chapeaux",
-      "Gants",
-      "Bijoux",
-      "Sacs à main"
-    ],
-    Icon: "https://images.pexels.com/photos/30076369/pexels-photo-30076369.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  }
-]
+//   {
+//     id: 10,
+//     Name: "Accessoires",
+//     subCategorie: [
+//       "Écharpes",
+//       "Chapeaux",
+//       "Gants",
+//       "Bijoux",
+//       "Sacs à main"
+//     ],
+//     Icon: "https://images.pexels.com/photos/30076369/pexels-photo-30076369.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   }
+// ]
+const [mockCategories, setMockCategories] = useState([]); // État pour stocker les catégories
+  
+  
+  useEffect(() => {
+    // Fonction pour récupérer les catégories
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/categories`, {
+                headers: {
+                    accept: 'application/json',
+                },
+            });
+            setMockCategories(response.data); // Mettre à jour l'état avec les données récupérées
+        } catch (error) {
+            console.error('Erreur lors de la récupération des catégories :', error);
+        }
+    };
+  
+    fetchCategories(); // Appel de la fonction
+  }, []);
+  // useEffect(()=>{
+  // // console.log("mockCategories ",mockCategories)
+  // },[mockCategories])
   const toggleMenu = () => {
     setMenu(!menu);
   };
@@ -200,7 +225,14 @@ const mockCategories= [
     setOpenCategory(openCategory === index ? null : index);
     
   };  
-  
+  const handleLogOut = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("CC_Token");
+    localStorage.setItem("user", JSON.stringify({}));
+    setAccount({});
+    // Rafraîchissement de la page
+    window.location.reload();  // Cela rechargera la page actuelle
+}
   return (
    
     // <header class="shadow-md bg-white dark:bg-gray-800">
@@ -208,15 +240,15 @@ const mockCategories= [
       <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             
-            <Link to="/" className="flex items-center">
-                    <img
-                        src={logo}
-                        className="mr-3 h-9 sm:h-12"
-                        alt="Flowbite Logo"
-                      />
-            </Link>
+        <Link to="/" className="flex items-center">
+          <img
+            src={logo}
+            className="mr-3 w-24 h-16 sm:h-20 sm:w-25"
+            alt="Flowbite Logo"
+          />
+        </Link>
             <div class="flex items-center lg:order-2">
-              {context.isLogin !==true? (<>
+              {Object.keys(context.account).length === 0 ? (<>
               <Link to="/login" class="p-2 text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-1 focus:ring-gray-300 font-medium rounded-lg text-sm  lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">
               Connexion
               </Link>
@@ -229,20 +261,23 @@ const mockCategories= [
                   text-sm font-medium leading-none text-gray-900 dark:text-white"
                  onClick={toggleAccount}
                  >
-                   <img className="h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo"/>
+                   {/* <img className="" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo"/> */}
+                   <svg class="w-[35px] h-[35px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M12 20a7.966 7.966 0 0 1-5.002-1.756l.002.001v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z" clip-rule="evenodd"/>
+</svg>
 
                  </button>
                  {account && 
                  <div id="userDropdown1" class="right-0 absolute z-10 w-56 divide-y divide-gray-100 overflow-hidden overflow-y-auto rounded-lg bg-white antialiased shadow dark:divide-gray-600 dark:bg-gray-700">
                    <ul class="p-2 text-start text-sm font-medium text-gray-900 dark:text-white">
-                     <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Profil</a></li>
+                     <li><Link to="/profil" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Profil</Link></li>
                      {/* <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Orders </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Settings </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Favourites </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Delivery Addresses </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Billing Data </a></li> */}
                    
-                     <button onClick={()=>context.setIsLogin(!context.isLogin)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
+                     <button onClick={(e)=>handleLogOut(e)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
                    
                    </ul>
                
@@ -432,7 +467,7 @@ const mockCategories= [
                                           </p>
                                         </div>
                                         <p className="mt-0.5 truncate text-xs	 font-normal text-gray-500 dark:text-gray-400">
-                                      {item.Price.toFixed(2)}
+                                      {item.Price}
                                     </p>
                                       </div>
                                     </div>
@@ -529,6 +564,7 @@ const mockCategories= [
                             ))}
                   
                             <Link
+                              onClick={()=>setCart(!cart)}
                               to="/checkout"
                              
                               className="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium text-white bg-[#011d28] hover:bg-[#011d28e6] focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -540,12 +576,6 @@ const mockCategories= [
                         ) : (
                           
                             <div id="myCartDropdown1" class="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800 ">
-                              
-                              
-                          
-                          
-                              
-                          
                               <p href="#" title="" class="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg text-[#011d28] px-5 py-2.5 text-sm font-medium  dark:text-white" > 
                               Votre panier est vide.
                                 </p>
@@ -595,20 +625,43 @@ const mockCategories= [
       to="/"
       title="Home"
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+      onClick={()=>setMenu(!menu)}
     >
       Home
     </Link>
   </li>
-  <li className="mt-2 lg:mt-0">
+   <li className="mt-2 lg:mt-0">
     <Link
         to="/products"
             title="Produits"
       className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+      onClick={()=>setMenu(!menu)}
     >
       Produits
     </Link>
   </li>
   <li className="mt-2 lg:mt-0">
+    <Link
+        to="/products?gender=femme"
+            title="Produits"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+      onClick={()=>setMenu(!menu)}
+    >
+      FEMME
+    </Link>
+  </li>
+  <li className="mt-2 lg:mt-0">
+    <Link
+        to="/products?gender=homme"
+            title="Produits"
+      className="text-sm font-medium text-gray-900 hover:text-[#011d28c4] dark:text-white dark:hover:text-primary-500"
+      onClick={()=>setMenu(!menu)}
+    >
+      HOMME
+    </Link>
+  </li>
+  
+  {/* <li className="mt-2 lg:mt-0">
     <Link
       to="/products/?trie=newest"
      
@@ -616,8 +669,9 @@ const mockCategories= [
     >
       Nouveautés
     </Link>
-  </li>
-  <li className="mt-2 lg:mt-0">
+  </li> 
+  
+<li className="mt-2 lg:mt-0">
     <Link
       to="/products/?trie=topRated"
       
@@ -634,7 +688,7 @@ const mockCategories= [
     >
       Bestsellers
     </Link>
-  </li>
+  </li> */}
  
 </ul>
 

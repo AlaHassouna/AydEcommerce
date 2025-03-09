@@ -619,12 +619,12 @@ import ProductCart from './ProductCart';
   //     });
   // }, []);
   // Vérifier si `products` est non vide
-useEffect(() => {
-  if (products.length > 0) {
-    console.log('Products is no longer empty:', products);
-    // Vous pouvez exécuter une logique supplémentaire ici
-  }
-}, [products]);
+// useEffect(() => {
+//   if (products.length > 0) {
+//     console.log('Products is no longer empty:', products);
+//     // Vous pouvez exécuter une logique supplémentaire ici
+//   }
+// }, [products]);
   return (
     <div>
     

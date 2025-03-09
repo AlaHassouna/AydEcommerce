@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import Slider from 'react-slick'; // Import Slider component
 
 const ProductCart = ({ products ,nbslidesToShow}) => {
+
+  // console.log("products",products)
   const sliderRef = useRef(null); // Référence pour accéder au carrousel
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -30,7 +32,7 @@ const ProductCart = ({ products ,nbslidesToShow}) => {
       {
         breakpoint: 1151,
         settings: {
-          slidesToShow: 3, // Show 3 products on medium screens
+          slidesToShow: 1, // Show 3 products on medium screens
           slidesToScroll: 1,
         },
       },
@@ -81,8 +83,8 @@ const ProductCart = ({ products ,nbslidesToShow}) => {
 
       {/* Composant Slider */}
       <Slider ref={sliderRef} {...settings}>
-        {products.map((product) => (
-          
+        {products && products.map((product,index) => (
+          <Link to={`/product/${product.UID}`} key={index} state={{ product }}>
             <div
               key={product.UID}
              className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800 transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
@@ -90,7 +92,7 @@ const ProductCart = ({ products ,nbslidesToShow}) => {
            >
               
               <div className="h-56 relative overflow-hidden group">
-              <Link to={`/product/${product.UID}`} state={{ product }}>
+              
                 {/* Conteneur pour l'image avec animation */}
                 <div className="relative h-56 overflow-hidden group">
                   <img
@@ -105,15 +107,16 @@ const ProductCart = ({ products ,nbslidesToShow}) => {
                     alt={`Image hover of ${product.Product}`}
                   />
                 </div>
-              </Link>
+              
               </div>
               <div className="pt-6">
                 <div className="mb-4 flex items-center justify-between gap-4">
-                  {product.OldPrice > product.Price && (
-                    <span className="rounded bg-[#551121] px-2.5 py-0.5 text-xs font-medium text-white dark:bg-primary-900 dark:text-primary-300">
-                      {Math.round(((product.OldPrice - product.Price) * 100) / product.OldPrice)}% de réduction
-                    </span>
-                  )}
+                {(parseFloat(product.OldPrice) > parseFloat(product.Price)) && (
+                  <span className="rounded bg-[#551121] px-2.5 py-0.5 text-xs font-medium text-white dark:bg-primary-900 dark:text-primary-300">
+                    {Math.round(((parseFloat(product.OldPrice) - parseFloat(product.Price)) * 100) / parseFloat(product.OldPrice))}% de réduction
+                  </span>
+                )}
+
 
                   <div class="flex items-center justify-end gap-1">
                 <Link to={`/product/${product.UID}`} state={{ product }}>
@@ -223,7 +226,7 @@ const ProductCart = ({ products ,nbslidesToShow}) => {
               </div>
             </div>
 
-           
+            </Link>
           
         ))}
       </Slider>

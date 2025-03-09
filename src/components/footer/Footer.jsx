@@ -4,17 +4,20 @@ import logoWhite from '../../assets/images/logowhite.png';
 import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
-    <footer class="p-4 bg-white md:p-8 lg:p-10 dark:bg-gray-800">
-  <div class="mx-auto max-w-screen-xl text-center">
-      <a href="#" class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white">
-          <img src={logo} alt="" className='w-12'/>
-            
-      </a>
-      <p class="my-6 text-gray-500 dark:text-gray-400">Attire Your Desire with the finest fashion, designed to inspire confidence, elevate your style, and bring your dreams to life.</p>
-      
-      <ul className="flex flex-wrap justify-center items-center mb-6 text-gray-900 dark:text-white">
-        <li className="mt-2 lg:mt-0">
-          <Link
+   
+
+
+
+<footer class="bg-white rounded-lg shadow dark:bg-gray-900 m-4">
+    <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+            <Link to="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+            {/* <img src={logo}  class="h-8" alt="Flowbite Logo" /> */}
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Yostyle</span>
+            </Link>
+            <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                <Link
             to="/"
             title="Home"
             className="mr-4 hover:underline md:mr-6 "
@@ -33,36 +36,31 @@ const Footer = () => {
         </li>
         <li className="mt-2 lg:mt-0">
           <Link
-            to="/products/?trie=newest"
+            to="/products?gender=femme"
            
             className="mr-4 hover:underline md:mr-6 "
           >
-            Nouveautés
+            FEMME
           </Link>
         </li>
         <li className="mt-2 lg:mt-0">
           <Link
-            to="/products/?trie=topRated"
+            to="/products?gender=homme"
             
             className="mr-4 hover:underline md:mr-6 "
           >
-            Meilleures évaluations
+            HOMME
           </Link>
         </li>
-        <li className="mt-2 lg:mt-0">
-          <Link
-            to="/products/?trie=bestSellers"
-            
-            className="mr-4 hover:underline md:mr-6 "
-          >
-            Bestsellers
-          </Link>
-        </li>
-        
-      </ul>
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025-2026 <a href="#" class="hover:underline">AYD</a>. All Rights Reserved.</span>
-  </div>
+       
+            </ul>
+        </div>
+        <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+        <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 Yostyle. All Rights Reserved.</span>
+    </div>
 </footer>
+
+
   )
 }
 

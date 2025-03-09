@@ -32,7 +32,7 @@ const Product = () => {
 
 //     fetchProduct(); // Call the async function
 // }, [id]); // Dependency array ensures the effect runs when `id` changes
-
+// console.log("id",id)
 const location = useLocation();
 const product = location.state?.product || location.state?.hotProduct;
 const navigate = useNavigate();
@@ -233,7 +233,7 @@ useEffect(() => {
                                 <h2 class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2">{product?.Product}
                                 </h2>
                             </div>
-                            <button class="group transition-all duration-500 p-0.5">
+                            {/* <button class="group transition-all duration-500 p-0.5">
                                 <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <circle
@@ -245,7 +245,7 @@ useEffect(() => {
                                         stroke="" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round"
                                         stroke-linejoin="round" />
                                 </svg>
-                            </button>
+                            </button> */}
                         </div>
                     <div class="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-8 gap-y-3">
                       
@@ -288,6 +288,8 @@ useEffect(() => {
                             </button>
                         </div>
                         <div>
+      <p className="font-medium text-lg text-gray-900 mb-2">Genre : <span className='text-base'>{product?.Gender}</span></p>
+
       {/* Titre Taille */}
       <p className="font-medium text-lg text-gray-900 mb-2">Taille</p>
       {/* Boutons de tailles */}
@@ -312,58 +314,73 @@ useEffect(() => {
   <>
     <p className="font-medium text-lg text-gray-900 mb-2">Couleurs disponibles</p>
     <div className="flex items-center justify-start gap-3 md:gap-6 relative mb-6">
-      {colorsForSelectedSize.map((color, index) => (
-        <button
-          key={index}
-          onClick={() => handleColorChange(color.Color)} // Mise à jour de l'état lors du clic
-          className="p-2.5 border border-gray-200 rounded-full transition-all duration-300 hover:border-emerald-500 focus:border-emerald-500"
+  {colorsForSelectedSize.map((color, index) => (
+    <div key={index} className="relative group">
+      <button
+        onClick={() => handleColorChange(color.Color)} // Mise à jour de l'état lors du clic
+        className="p-2.5 border border-gray-600 rounded-full transition-all duration-300 hover:border-emerald-500 focus:border-emerald-500"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="20" cy="20" r="20" fill={color.Color.toLowerCase()} />
-          </svg>
-          <span className="sr-only">{color.Color}</span>
-        </button>
-      ))}
+          <circle cx="20" cy="20" r="20" fill={color.Color.toLowerCase()} />
+        </svg>
+        <span className="sr-only">{color.Color}</span>
+      </button>
+      {/* Tooltip */}
+      <span className="absolute left-1/2 -top-8 -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        {color.Color}
+      </span>
     </div>
+  ))}
+</div>
+
   </>
 )}
     </div>
                         <div class="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                         <div className="flex items-center space-x-4">
-      {/* Bouton de diminution */}
-      <button
-        className="group py-[14px] px-3 w-full border-r border-gray-400 rounded-l-full h-full flex items-center justify-center bg-white shadow-sm transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
-        onClick={handleDecrease}
-      >
-        <svg className="stroke-black group-hover:stroke-black" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.5 11H5.5" stroke="#000" stroke-width="1.6" stroke-linecap="round" />
-        </svg>
-      </button>
+                        {getMaxQuantity() === 0 ? (
+                          <span class="bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300">Rupture de stock</span>
 
-      {/* Champ d'input pour la quantité */}
-      <input
-        type="number"
-        className="font-semibold border-0 text-gray-900 text-lg py-3 px-2 w-full min-[400px]:min-w-[75px] h-full bg-transparent placeholder:text-gray-900 text-center hover:text-indigo-600 outline-0"
-        value={quantity}
-        readOnly
-      />
+) : (
+  <>
+    {/* Bouton de diminution */}
+    <button
+      className="group py-[14px] px-3 w-full border-r border-gray-400 rounded-l-full h-full flex items-center justify-center bg-white shadow-sm transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
+      onClick={handleDecrease}
+    >
+      <svg className="stroke-black group-hover:stroke-black" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.5 11H5.5" stroke="#000" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    </button>
 
-      {/* Bouton d'augmentation */}
-      <button
-        className="group py-[14px] px-3 w-full border-l border-gray-400 rounded-r-full h-full flex items-center justify-center bg-white shadow-sm transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
-        onClick={handleIncrease}
-      >
-        <svg className="stroke-black group-hover:stroke-black" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#000" stroke-width="1.6" stroke-linecap="round" />
-        </svg>
-      </button>
+    {/* Champ d'input pour la quantité */}
+    <input
+      type="number"
+      className="font-semibold border-0 text-gray-900 text-lg py-3 px-2 w-full min-[400px]:min-w-[75px] h-full bg-transparent placeholder:text-gray-900 text-center hover:text-indigo-600 outline-0"
+      value={quantity}
+      readOnly
+    />
+
+    {/* Bouton d'augmentation */}
+    <button
+      className="group py-[14px] px-3 w-full border-l border-gray-400 rounded-r-full h-full flex items-center justify-center bg-white shadow-sm transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
+      onClick={handleIncrease}
+    >
+      <svg className="stroke-black group-hover:stroke-black" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#000" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    </button>
+  </>
+)}
+
     </div>
+    {getMaxQuantity() > 0 && (
                             <button
                             onClick={handleAddToCart}
                                 class="group py-3 px-5 rounded-full bg-indigo-50 text-[#011d28] font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-200 hover:bg-indigo-100">
@@ -374,7 +391,7 @@ useEffect(() => {
                                         d="M10.7394 17.875C10.7394 18.6344 10.1062 19.25 9.32511 19.25C8.54402 19.25 7.91083 18.6344 7.91083 17.875M16.3965 17.875C16.3965 18.6344 15.7633 19.25 14.9823 19.25C14.2012 19.25 13.568 18.6344 13.568 17.875M4.1394 5.5L5.46568 12.5908C5.73339 14.0221 5.86724 14.7377 6.37649 15.1605C6.88573 15.5833 7.61377 15.5833 9.06984 15.5833H15.2379C16.6941 15.5833 17.4222 15.5833 17.9314 15.1605C18.4407 14.7376 18.5745 14.0219 18.8421 12.5906L19.3564 9.84059C19.7324 7.82973 19.9203 6.8243 19.3705 6.16215C18.8207 5.5 17.7979 5.5 15.7522 5.5H4.1394ZM4.1394 5.5L3.66797 2.75"
                                         stroke="" stroke-width="1.6" stroke-linecap="round" />
                                 </svg>
-                                Add to cart</button>
+                                Add to cart</button>)}
                                 {showNotification && (
                                   <div
                                     className="fixed z-10 top-4 right-4 bg-gradient-to-r from-[#011d28]  to-[#065875e6] text-white py-4 px-6 rounded-lg shadow-xl transform transition-all duration-500 ease-in-out w-72" // Réduction de la largeur
@@ -406,10 +423,12 @@ useEffect(() => {
                                 )}
 
                         </div>
+                        {getMaxQuantity() > 0 && (
                         <button onClick={handleAddToCartAndRedirect}
                             class="text-center w-full px-5 py-4 rounded-[100px] bg-[#011d28] flex items-center justify-center font-semibold text-lg text-white shadow-sm shadow-transparent transition-all duration-500 hover:bg-[#011d28e6] hover:shadow-indigo-300">
                             Acheter maintenant
-                        </button>
+                        </button>)}
+                              
                     </div>
                 </div>
 
@@ -419,7 +438,7 @@ useEffect(() => {
                       {product?.Description}
                       </p> 
                 
-                    <Rating/>
+                    <Rating uid={id} />
                 </div>
             </div>
         </div>

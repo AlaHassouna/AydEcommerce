@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Pagination from '../../pages/productsPage/Pagination';
+import axios from 'axios'
+const Products = ({mockCategories}) => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-const Products = ({mockCategories,products}) => {
   const [trier, setTrier] = useState(false);
   const [filters, setFilters] = useState(false);
   const [category, setCategory] = useState(false);
@@ -9,10 +12,55 @@ const Products = ({mockCategories,products}) => {
   const [shipping, setShipping] = useState(false);
   const [rating, setRating] = useState(false);
   const [sousCategory, setSousCategory] = useState(false);
-  // Appliquer handleDeleteFilters lors du premier montage ou rafraîchissement de la page
-useEffect(() => {
-  handleDeleteFilters(); // Réinitialiser les filtres au chargement de la page
-}, []); // Le tableau vide [] signifie que l'effet ne se déclenche qu'une fois, au premier montage
+  let [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit]=useState(4)
+
+  const [filteredProducts, setFilteredProducts] = useState([]); // Initialisation avec une liste vide
+
+  // const[isLoading,setisLoading]=useState(true)
+  const [selectedOption, setSelectedOption] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const[categoryMap,setCategoryMap]=useState({})
+  const[categoryId,setCategoryId]=useState()
+  const [idSupp,setIdSupp]=useState()
+  const [minPrice, setMinPrice] = useState(''); // MinPrice sélectionnée
+  const [maxPrice, setMaxPrice] = useState(''); // MinPrice sélectionnée
+  const [sortedProducts, setSortedProducts] = useState(filteredProducts);
+  const [subcategory, setSubcategory] = useState([]); // Sous-catégories à afficher
+  const [genre, setGenre] = useState(); // Sous-catégories à afficher
+  
+  // Utilisez useEffect pour mettre à jour l'état en fonction des paramètres de l'URL
+  // const [selectSubcategory, setSelectSubcategory] = useState([]); // Sous-catégories sélectionnées
+  
+  // Récupère le nom de la catégorie depuis l'état passé dans le lien
+  // const { categoryName } = location.state || {};  
+  // const { subCategoryName } = location.state || {};  
+  // État pour les catégories sélectionnées
+
+
+  // const [categoryVal, setCategoryVal] = useState([]); // Catégories sélectionnées
+  // useEffect(() => {
+//     // Lorsque les catégories sont mises à jour, afficher les sous-catégories associées
+//     const allSubcategories = selectedCategories
+//       .map((category) => mockCategories.find((cat) => cat.Name === category)?.subCategorie)
+//       .flat();
+  
+//     // Utilisation de Set pour garantir l'unicité des sous-catégories
+//     const uniqueSubcategories = [...new Set(allSubcategories)];
+  
+//     setSubcategory(uniqueSubcategories);
+//   }, [selectedCategories]);
+  
+
+
+    // Appliquer handleDeleteFilters lors du premier montage ou rafraîchissement de la page
+  useEffect(() => {
+    handleDeleteFilters(); // Réinitialiser les filtres au chargement de la page
+  }, []); // Le tableau vide [] signifie que l'effet ne se déclenche qu'une fois, au premier montage
+
   const handleAddToCart = (product) => {
     // console.log("product ",product)
     const cartItem = {
@@ -49,71 +97,165 @@ useEffect(() => {
   const toggleSousCategory=()=>{
     setSousCategory(!sousCategory)
   }
-  const [selectedOption, setSelectedOption] = useState('');
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // Utilisez useEffect pour mettre à jour l'état en fonction des paramètres de l'URL
+  const toggleGenre=()=>{
+    setGenre(!genre)
+  }
   
 
 
-  const [categoryVal, setCategoryVal] = useState([]); // Catégories sélectionnées
-  const [subcategory, setSubcategory] = useState([]); // Sous-catégories à afficher
-  const [selectSubcategory, setSelectSubcategory] = useState([]); // Sous-catégories sélectionnées
-  
-// Récupère le nom de la catégorie depuis l'état passé dans le lien
-const { categoryName } = location.state || {};  
-const { subCategoryName } = location.state || {};  
-
-// État pour les catégories sélectionnées
-const [selectedCategories, setSelectedCategories] = useState([]);
 
 // Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
-useEffect(() => {
-  if (categoryName && !selectedCategories.includes(categoryName)) {
-    setSelectedCategories((prevCategories) => [...prevCategories, categoryName]);
-  }
-  console.log("selectedCategories",selectedCategories)
-  console.log("categoryName",categoryName)
 
-}, [categoryName]);
+// useEffect(() => {
+//   if (categoryName && !selectedCategories.includes(categoryName)) {
+//     setSelectedCategories((prevCategories) => [...prevCategories, categoryName]);
+//   }
+//   console.log("selectedCategorikkkkkkkkkkkkkkkes",selectedCategories)
+//   console.log("categoryName",categoryName)
+
+// }, [categoryName]);
 // Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
-useEffect(() => {
-  if (subCategoryName && !selectedCategories.includes(subCategoryName)) {
-    setSelectSubcategory((prevSubCategories) => [...prevSubCategories, subCategoryName]);
-  }
-  console.log("selectedSubCategories",selectSubcategory)
-  console.log("subCategoryName",subCategoryName)
 
-}, [subCategoryName]);
+
+
+
+// useEffect(() => {
+//   if (subCategoryName && !selectedCategories.includes(subCategoryName)) {
+//     setSelectSubcategory((prevSubCategories) => [...prevSubCategories, subCategoryName]);
+//   }
+//   console.log("selectedSddddddddddddddddddddddddddddddddddddddddddubCategories",selectSubcategory)
+//   console.log("subCategoryName",subCategoryName)
+
+// }, [subCategoryName]);
+
+
+function getSubCategoryIdByName(subCategories, name) {
+   const parsedId = subCategories.find(subCategory => subCategory.Name.toLowerCase() === name.toLowerCase());
+  return parsedId ? parsedId.id : null; // Retourne l'ID ou null si non trouvé
+ }
+const removeCategory = (key) => {
+  // S'assurer que key est une chaîne de caractères pour correspondre aux clés de categoryMap
+  const keyStr = String(key);
+
+  // Créer un nouvel objet sans la clé spécifiée
+  const newCategoryMap = Object.fromEntries(
+    Object.entries(categoryMap).filter(([categoryKey]) => categoryKey !== keyStr)
+  );
+
+  // console.log("newCategoryMap", newCategoryMap);
+  setCategoryMap(newCategoryMap);
+};
 const handleCategorySelect = (categoryName) => {
   setSelectedCategories((prevSelectedCategories) => {
     if (prevSelectedCategories.includes(categoryName)) {
       // Si la catégorie est déjà sélectionnée, la retirer
+      setIdSupp(getCategoryIdByName(mockCategories, categoryName));
+      
+
       return prevSelectedCategories.filter((category) => category !== categoryName);
     } else {
       // Sinon, l'ajouter à la liste
+    setCategoryId(getSubCategoryIdByName(mockCategories, categoryName));
+
       return [...prevSelectedCategories, categoryName];
     }
   });
 };
 
-useEffect(() => {
-    // Lorsque les catégories sont mises à jour, afficher les sous-catégories associées
-    const allSubcategories = selectedCategories
-      .map((category) => mockCategories.find((cat) => cat.Name === category)?.subCategorie)
-      .flat();
-  
-    // Utilisation de Set pour garantir l'unicité des sous-catégories
-    const uniqueSubcategories = [...new Set(allSubcategories)];
-  
-    setSubcategory(uniqueSubcategories);
-  }, [selectedCategories]);
+const removeCategoryItems = (categoryId) => {
+  // Créer un nouvel objet sans les éléments ayant le category_id donné
+  const newCategoryArray = subcategory.map(categoryGroup =>
+    categoryGroup.filter(item => item.category_id !== categoryId)
+  ).filter(categoryGroup => categoryGroup.length > 0); // Supprime les groupes vides
 
-  const handleSubcategoryChange = (event) => {
+  // console.log("newCategoryArray", newCategoryArray);
+  setSubcategory(newCategoryArray);
+};
+useEffect(() => {
+  if (subcategory) {
+    
+    // console.log("aya haw lina",subcategory)
+    setCategoryMap((prevCategoryMap) => {
+      const newCategoryMap = transformData(subcategory);
+      // Fusionner les anciennes catégories avec les nouvelles
+      return { ...prevCategoryMap, ...newCategoryMap };
+    });
+  // }
+  }
+}, [subcategory]);
+// useEffect(()=>{
+//   console.log("categoryMap modifié",categoryMap)
+//   },[categoryMap])
+  
+
+  useEffect(()=>{
+    // console.log("idSupp",idSupp)
+    removeCategory(idSupp)
+    removeCategoryItems(idSupp)
+    },[idSupp])
+
+const transformData = (data) => {
+  // console.log("data dans fonciton",data)
+  return data.flat().reduce((acc, item) => {
+    const { category_id, id, Name } = item;
+    if (!acc[category_id]) {
+      acc[category_id] = [];
+    }
+    acc[category_id].push({ id, Name });
+    return acc;
+  }, {});
+};
+useEffect(()=>{
+  // subcategory
+  
+  const fetchSubCategories = async () => {
+    try {
+      if (categoryId) {
+
+        const response = await axios.get(`${API_URL}/categories/${categoryId}/subcategories`, {
+          headers: {
+            accept: 'application/json', // Spécifie le type de contenu attendu de l'API
+          },
+        });
+        // setSubcategory(response.data);
+        setSubcategory(prevSubcategories => [
+          ...prevSubcategories, // garde les anciennes sous-catégories
+          response.data // ajoute les nouvelles
+        ]);
+        // Si vous avez besoin de mettre à jour l'état avec les sous-catégories, vous pouvez utiliser setState ici
+        // setSubCategories(response.data);  // Assurez-vous d'avoir cette fonction dans votre contexte
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des sous-catégories", error);
+      // Vous pouvez aussi afficher un message d'erreur à l'utilisateur si nécessaire
+    }
+  };
+    //  setSubCategories(response2.data); // Store the data in the state
+     
+    fetchSubCategories();
+
+},[categoryId])
+const[totalLength,setTotalLength]=useState()
+
+
+function getCategoryNameById(id) {
+  const parsedId = typeof id === "string" ? parseInt(id, 10) : id; // Convertit en nombre si nécessaire
+const category = mockCategories.find(category => category.id === parsedId);
+ return category ? category.Name : null;
+}
+
+
+
+useEffect(()=>{
+//console.log("selectedCategories ",selectedCategories)
+},[selectedCategories])
+
+  
+  const handleSubcategoryChange2 = (event) => {
     const value = event.target.value; // Valeur de la sous-catégorie
     const isChecked = event.target.checked; // État de la case à cocher
-    
+    // //console.log("heeeeeeeeeeeeeeeeeeeeeeeey",getSubCategoryIdByName(subcategory,value))
+    //console.log("heeeeeeeeeeeeeeeeeeeeeeeey",subcategory)
     setSelectSubcategory((prev) => {
       if (isChecked) {
         // Ajouter la sous-catégorie sélectionnée
@@ -125,6 +267,7 @@ useEffect(() => {
     });
   }
   const [selectedRatings, setSelectedRatings] = useState([]);
+  // const [page, setPage] = useState();
 
   const handleRatingSelect = (rating) => {
     setSelectedRatings((prevRatings) => {
@@ -137,184 +280,398 @@ useEffect(() => {
         return [...prevRatings, rating];
       }
     });
-    console.log("selectedRatings",selectedRatings)
+    //console.log("selectedRatings",selectedRatings)
   };
-  const [minPrice, setMinPrice] = useState(''); // MinPrice sélectionnée
-  const [maxPrice, setMaxPrice] = useState(''); // MinPrice sélectionnée
 
- 
-  const [filteredProducts, setFilteredProducts] = useState([]); // Initialisation avec une liste vide
-  useEffect(() => {
-    console.log('Products before filtering:', products);
-    console.log('Filters:', { selectedCategories, selectSubcategory, minPrice, maxPrice });
-  
-    if (!products || products.length === 0) {
-      console.log('Products list is empty or undefined');
-      setFilteredProducts([]);
-      return;
-    }
+  function getCategoryIdByName(categories, name) {
+    // console.log('categories dans fonction trouve id',categories)
+     const parsedId = categories.find(category => category.Name.toLowerCase() === name.toLowerCase());
+    //console.log('parsedId dans fonction trouve id',parsedId)
    
-    const filtered = products.filter(product => {
-      // Vérifie si le produit correspond aux catégories sélectionnées
-      const matchesCategory = selectedCategories.length > 0
-        ? selectedCategories.includes(product.Category)
-        : true;  // Si aucune catégorie n'est sélectionnée, tout est accepté
-  
-      // Vérifie si le produit correspond aux sous-catégories sélectionnées
-      const matchesSubcategory = selectSubcategory.length > 0
-        ? selectSubcategory.includes(product.SubCategory)
-        : true;  // Si aucune sous-catégorie n'est sélectionnée, tout est accepté
-  
-      // Vérifie si le produit correspond à la plage de prix
-      // Vérifie si le produit correspond au minPrice
-    const matchesMinPrice = minPrice !== ''
-    ? product.Price >= minPrice
-    : true;
+     return parsedId ? parsedId.id : null; // Retourne l'ID ou null si non trouvé
+   }
+   const handlePrevPage = () => {
+    if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+    }
+    };
+    const handleNextPage = () => {
+    if (currentPage < totalPages) {
+    setCurrentPage(currentPage + 1);
+    }
+    };
+    const handlePageChange = (page) => {
+    setCurrentPage(page);
+    };
+    const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState([]);
+    const[gender,setGender]=useState("")
 
-  // Vérifie si le produit correspond au maxPrice
-  const matchesMaxPrice = maxPrice !== ''
-    ? product.Price <= maxPrice
-    : true;
-    // Filtre les produits en fonction de la note
-    const matchesRating = selectedRatings.length > 0
-    ? selectedRatings.includes(Math.floor(product.Rating)) // Compare la partie entière du rating
-    : true;
+// Gestionnaire de changement pour les sous-catégories
+const handleSubcategoryChange = (event) => {
+  const { value, checked } = event.target;
+  const id = parseInt(value, 10); // Convertit la valeur en nombre
 
-    return matchesCategory && matchesSubcategory && matchesMinPrice && matchesMaxPrice && matchesRating;
-    });
+  setSelectedSubcategoryIds((prev) =>
+    checked ? [...prev, id] : prev.filter((subCatId) => subCatId !== id)
+  );
+};
+useEffect(()=>{
+//console.log("selectedSubcategoryIds",selectedSubcategoryIds)
+},[selectedSubcategoryIds])
+useEffect(() => {
+  const queryParams = new URLSearchParams(location.search);
+  const genderParam = queryParams.get('gender');
+  console.log("genderParam",genderParam)
+  const trieValue = queryParams.get('trie');
+  console.log("trieValue",trieValue)
+
+  if (genderParam && (genderParam === "homme" || genderParam === "femme")) {
+    setGender(genderParam);
+  }else{
+    setGender("")
+  }
+
+  if (trieValue) {
+    setSelectedOption(trieValue);
+  }
+}, [location.search]);
+
+// Un deuxième useEffect qui attend que `gender` soit bien mis à jour
+useEffect(() => {
+  if (gender !== null) {
+    console.log("gender mis à jour :", gender);
+  }
+}, [gender]);
+
+useEffect(() => {
+  if (gender !== null) {
+    const fetchProducts = async () => {
+      try {
+        let categoriesString = '';
+        let subcategoriesString = '';
+        let ratingsString = '';
+        let priceRange = '';
+
+        if (selectedCategories?.length > 0) {
+          categoriesString = selectedCategories
+            .map(category => `categories[]=${getCategoryIdByName(mockCategories, category)}`)
+            .join('&');
+        }
+
+        if (selectedSubcategoryIds?.length > 0) {
+          subcategoriesString = selectedSubcategoryIds
+            .map(subcategory => `subCategories[]=${subcategory}`)
+            .join('&');
+        }
+
+        if (minPrice && maxPrice) {
+          priceRange = `priceRange[]=${Math.min(minPrice, maxPrice)}&priceRange[]=${Math.max(minPrice, maxPrice)}`;
+        }
+
+        if (selectedRatings?.length > 0) {
+          ratingsString = selectedRatings.map(rating => `ratings[]=${rating}`).join('&');
+        }
+
+        let queryString = [categoriesString, subcategoriesString, priceRange, ratingsString]
+          .filter(Boolean)
+          .join('&');
+
+        let url = `${API_URL}/produitsPaginate?pageSize=${limit}&page=${currentPage}&${queryString}`;
+
+        console.log("gender avant requête :", gender);
+        if (gender) {
+          url += `&gender=${gender}`;
+        }
+        if (selectedOption) {
+          url += `&sortBy=${selectedOption}`;
+        }
+
+        console.log("URL générée :", url);
+
+        const response = await axios.get(url);
+        setFilteredProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
+        console.error("Erreur lors de la requête :", error);
+      }
+    };
+
+    fetchProducts();
+  }
+}, [gender, selectedCategories, selectedSubcategoryIds, minPrice, maxPrice, selectedRatings, currentPage, selectedOption]);
+
+// useEffect(()=>{
+//   //console.log("totalPages",totalPages)
+// },[totalPages])
+ 
+  // useEffect(() => {
+  //   console.log('Products before filtering:', products);
+  //   console.log('Filters:', { selectedCategories, selectSubcategory, minPrice, maxPrice });
+  
+  //   if (!products || products.length === 0) {
+  //     console.log('Products list is empty or undefined');
+  //     setFilteredProducts([]);
+  //     return;
+  //   }
+   
+  //   const filtered = products.filter(product => {
+  //     // Vérifie si le produit correspond aux catégories sélectionnées
+  //     const matchesCategory = selectedCategories.length > 0
+  //       ? selectedCategories.includes(product.Category)
+  //       : true;  // Si aucune catégorie n'est sélectionnée, tout est accepté
+  
+  //     // Vérifie si le produit correspond aux sous-catégories sélectionnées
+  //     const matchesSubcategory = selectSubcategory.length > 0
+  //       ? selectSubcategory.includes(product.SubCategory)
+  //       : true;  // Si aucune sous-catégorie n'est sélectionnée, tout est accepté
+  
+  //     // Vérifie si le produit correspond à la plage de prix
+  //     // Vérifie si le produit correspond au minPrice
+  //   const matchesMinPrice = minPrice !== ''
+  //   ? product.Price >= minPrice
+  //   : true;
+
+  // // Vérifie si le produit correspond au maxPrice
+  // const matchesMaxPrice = maxPrice !== ''
+  //   ? product.Price <= maxPrice
+  //   : true;
+  //   // Filtre les produits en fonction de la note
+  //   const matchesRating = selectedRatings.length > 0
+  //   ? selectedRatings.includes(Math.floor(product.Rating)) // Compare la partie entière du rating
+  //   : true;
+
+  //   return matchesCategory && matchesSubcategory && matchesMinPrice && matchesMaxPrice && matchesRating;
+  //   });
   
   
-    console.log('Filtered products:', filtered);
-    setFilteredProducts(filtered);
-  }, [selectedCategories, selectSubcategory, minPrice, maxPrice, products,selectedRatings]);
+  //   console.log('Filtered products:', filtered);
+  //   setFilteredProducts(filtered);
+  // }, [selectedCategories, selectSubcategory, minPrice, maxPrice, products,selectedRatings]);
   
 const handleDeleteFilters=()=>{
-  setSelectSubcategory([])
+  // setSelectSubcategory([]) 
   setSelectedCategories([])
   setMinPrice('')
   setMaxPrice('')
   setSelectedRatings([])
   setFilteredProducts([])
+  setSelectedSubcategoryIds([])
+  setSubcategory([])
+
 }
-
-
-useEffect(() => {
-  const queryParams = new URLSearchParams(location.search);
-  const trieValue = queryParams.get('trie');
-  if (trieValue) {
-    setSelectedOption(trieValue);
-  }
-}, [location.search]); // Re-exécuter lorsque l'URL change
 
 const handleSelection = (option) => {
   setSelectedOption(option);
-  // Rediriger l'utilisateur avec le paramètre "trie" mis à jour
-  navigate(`/products/?trie=${option}`);
+  
+  // Obtenez l'URL courante et les paramètres de requête existants
+  const currentUrl = new URL(window.location.href);
+  const params = new URLSearchParams(currentUrl.search);
+
+  // Ajoutez ou mettez à jour le paramètre "trie"
+  params.set('trie', option);
+
+  // Redirigez vers l'URL avec les nouveaux paramètres
+  navigate(`${currentUrl.pathname}?${params.toString()}`);
 };
-const [sortedProducts, setSortedProducts] = useState(filteredProducts);
 
-useEffect(() => {
-  // Fonction de tri en fonction de l'option sélectionnée
-  const sortProducts = (option) => {
-    let sorted = [...filteredProducts]; // Crée une copie des produits pour ne pas les modifier directement
 
-    switch (option) {
-      case 'bestSellers':
-        sorted = sorted.sort((a, b) => b.Sales - a.Sales); // Trier par ventes
-        break;
-      case 'topRated':
-        sorted = sorted.sort((a, b) => b.Rating - a.Rating); // Trier par note (Rating)
-        break;
-      case 'newest':
-        sorted = sorted.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt)); // Trier par date de création
-        break;
-      default:
-        break;
-    }
 
-    setSortedProducts(sorted); // Met à jour les produits triés
-    setFilteredProducts(sorted); // Met à jour filteredProducts avec les produits triés
-    console.log("sorted inside effect:", sorted); // Affiche directement la valeur triée ici
-  };
+// useEffect(() => {
+//   // Fonction de tri en fonction de l'option sélectionnée
+//   const sortProducts = (option) => {
+//     let sorted = [...filteredProducts]; // Crée une copie des produits pour ne pas les modifier directement
 
-  // Appelle la fonction de tri à chaque changement d'option
-  if (selectedOption) {
-    sortProducts(selectedOption);
-  }
-}, [selectedOption]); // Re-exécuter lorsque selectedOption ou filteredProducts changent
+//     switch (option) {
+//       case 'bestSellers':
+//         sorted = sorted.sort((a, b) => b.Sales - a.Sales); // Trier par ventes
+//         break;
+//       case 'topRated':
+//         sorted = sorted.sort((a, b) => b.Rating - a.Rating); // Trier par note (Rating)
+//         break;
+//       case 'newest':
+//         sorted = sorted.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt)); // Trier par date de création
+//         break;
+//       default:
+//         break;
+//     }
+
+//     setSortedProducts(sorted); // Met à jour les produits triés
+//     setFilteredProducts(sorted); // Met à jour filteredProducts avec les produits triés
+//     //console.log("sorted inside effect:", sorted); // Affiche directement la valeur triée ici
+//   };
+
+//   // Appelle la fonction de tri à chaque changement d'option
+//   if (selectedOption) {
+//     sortProducts(selectedOption);
+//   }
+// }, [selectedOption]); // Re-exécuter lorsque selectedOption ou filteredProducts changent
+// État pour les IDs des sous-catégories sélectionnées
+
 
 
   return (
     <section className="bg-white  antialiased dark:bg-gray-900 ">
-  <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        
+                       
+                          
+  <div className="mx-auto max-w-screen-xl px-4 2xl:px-0 ">
     {/* <!-- Heading & Filters --> */}
-    <div className="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
-      <div>
-      </div>
-      <div className="flex items-center space-x-4">
-        {/* <button data-modal-toggle="filterModal" data-modal-target="filterModal" type="button" className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">
-          <svg className="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z" />
-          </svg>
-          Filtres
-          <svg className="-me-0.5 ms-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
-          </svg>
-        </button> */}
-         {/* <!-- Filter modal --> */}
-         <div className="w-full md:w-auto flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-stretch sm:items-center justify-end sm:space-x-3 flex-shrink-0">
-                    <div className="relative">
-                    <button onClick={toggleFilters} id="filterDropdownButton" data-dropdown-toggle="filterDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="h-4 w-4 mr-1.5 -ml-1 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-                        </svg>
-                        Filtres
-                        <svg className="-mr-1 ml-1.5 w-5 h-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path clip-rule="evenodd" fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                        </svg>
-                    </button>
-                    {filters && (<div id="filterDropdown" className="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800">
-                        <div className="flex items-center justify-between pt-2">
-                            <h6 className="text-sm font-medium text-black dark:text-white">Filtres</h6>
-                            <div className="flex items-center space-x-3">
-                                <p onClick={(e) => handleDeleteFilters(e)} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
-                            </div>
-                        </div>
-                        {/* <div className="pt-3 pb-2">
-                            <label for="input-group-search" className="sr-only">Rechercher</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <input type="text" id="input-group-search" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Recherche..."/>
-                            </div>
-                        </div> */}
-                        <div id="accordion-flush" data-accordion="collapse" data-active-classes="text-black dark:text-white" data-inactive-classes="text-gray-500 dark:text-gray-400">
-                            
-                            
-                        {/* Catégories */}
-                        <div>
-                                {/* <!-- Category --> */}
-                            <h2 id="category-heading">
-                                <button type="button" onClick={toggleCategory} className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#category-body" aria-expanded="true" aria-controls="category-body">
-                                    <span>Catégorie</span>
-                                    {!category && (
+    <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    {/* <!-- Heading & Filters --> */}
+    {/* <!-- Heading & Filters --> */}
+<div className="mb-4 flex w-full items-center justify-between md:mb-8 flex-col sm:flex-row">
+  
+  {/* Breadcrumb à gauche */}
+  <div className="flex items-center h-10 rounded sm:mb-0">
+    <nav className="flex" aria-label="Breadcrumb">
+      <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+        <li>
+          <Link
+            to="/products"
+            className="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
+          >
+            Produits
+          </Link>
+        </li>
+        {gender && (
+          <li aria-current="page">
+            <div className="flex items-center">
+              <svg
+                className="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 6 10"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m1 9 4-4-4-4"
+                />
+              </svg>
+              <span className="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">
+                {gender}
+              </span>
+
+            </div>
+          </li>
+        )}
+      </ol>
+    </nav>
+  </div>
+
+  {/* Contenu à droite */}
+  <div className="w-full md:w-auto flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-stretch sm:items-center justify-end sm:space-x-3 flex-shrink-0">
+                   {/* <!-- Gender --> */}
+                                
+                   <div className="relative">
+                                <button type="button" onClick={toggleGenre} data-dropdown-toggle="filterDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" >
+                                    <span>Genre</span>
+                                    {genre && (
                                     <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                                     </svg>)}
-                                    {category && (
+                                    {!genre && (
                                        
                                       <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                                     </svg>
                                     )}
                                 </button>
-                            </h2>
+                           
+                                {genre &&
+                        <div id="dropdownSort1" className="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800" data-popper-placement="bottom">
+                                  <div className="flex items-center justify-between pt-2">
+                                      <h6 className="text-sm font-medium text-black dark:text-white">Genre</h6>
+                                      <div className="flex items-center space-x-3">
+                                          <p onClick={() => {
+                                              navigate(`/products`);
+                                              setGender('');
+                                              
+                                            }} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
+                                      </div>
+                                  </div>
+                                  <ul className="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="sortDropdownButton">
+                                  
+                                        <li className={` cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
+                                              gender === 'femme' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
+                                            }`}
+                                            
+                                            onClick={() => {
+                                              // Obtenez l'URL courante et les paramètres de requête existants
+                                              const currentUrl = new URL(window.location.href);
+                                              const params = new URLSearchParams(currentUrl.search);
+                                            
+                                              // Mettez à jour ou ajoutez le paramètre "gender"
+                                              params.set('gender', 'femme');
+                                            
+                                              // Redirigez vers l'URL mise à jour
+                                              navigate(`${currentUrl.pathname}?${params.toString()}`);
+                                            
+                                              // Mettez à jour l'état
+                                              setGender('femme');
+                                              setGenre(!genre);
+                                            }}
+                                            
+                                            
+                                            >
+                                            
+                                          
+                                            FEMME
+                                          
+                                        </li>
+                                        <li className={`cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
+                                              gender === 'homme' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
+                                            }`}
+                                            onClick={() => {
+                                              // Obtenez l'URL courante et les paramètres de requête existants
+                                              const currentUrl = new URL(window.location.href);
+                                              const params = new URLSearchParams(currentUrl.search);
+                                            
+                                              // Mettez à jour ou ajoutez le paramètre "gender"
+                                              params.set('gender', 'homme');
+                                            
+                                              // Redirigez vers l'URL mise à jour
+                                              navigate(`${currentUrl.pathname}?${params.toString()}`);
+                                            
+                                              // Mettez à jour l'état
+                                              setGender('HOMME');
+                                              setGenre(!genre);
+                                            }}>
+                                          
+                                            HOMME
+                                          
+                                        </li>
+                                        
+            
+                                  </ul>
+                          </div>
+
+                    }
+                                  </div>
+                   
+                   {/* <!-- Category --> */}
+                                
+                   <div className="relative">
+                                <button type="button" onClick={toggleCategory} data-dropdown-toggle="filterDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" >
+                                    <span>Catégories</span>
+                                    {category && (
+                                    <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>)}
+                                    {!category && (
+                                       
+                                      <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>
+                                    )}
+                                </button>
+                           
                             {category && (
-                            <div id="category-body" className="" aria-labelledby="category-heading">
-                                <div className="py-2 font-light border-b border-gray-200 dark:border-gray-600">
+                            <div id="category-body" className="right-0 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-600 absolute z-10 w-[350px]  mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800" aria-labelledby="category-heading">
+                                <div className="mt-2 font-light border-b border-gray-200 dark:border-gray-600">
                                     <ul className="space-y-2">
                                     {mockCategories.map((cat) => (
                                               <li key={cat.id} className="flex items-center">
@@ -338,10 +695,62 @@ useEffect(() => {
                                     </ul>
                                 </div>
                                   </div>)}
+                                  </div>
+                    <div className="relative">
+                     
                                 
-                              </div>
+                             
+                    <button onClick={toggleFilters} id="filterDropdownButton" data-dropdown-toggle="filterDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-[#011d28e6] focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="h-4 w-4 mr-1.5 -ml-1 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                        </svg>
+                        Filtres
+                       
+                        {filters && (
+                                    <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>)}
+                                    {!filters && (
+                                       
+                                      <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>
+                                    )}
+                    </button>
+                    {filters && (
+                     <div
+                     id="filterDropdown"
+                     className="right-0 divide-y divide-gray-100 overflow-y-auto dark:divide-gray-600 absolute z-10 w-[350px]  mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800"
+                   >
+                     <div className="flex items-center justify-between pt-2">
+                            <h6 className="text-sm font-medium text-black dark:text-white">Filtres</h6>
+                            <div className="flex items-center space-x-3">
+                                <p onClick={(e) => handleDeleteFilters(e)} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
+                            </div>
+                        </div>
+                        {/* <div className="pt-3 pb-2">
+                            <label for="input-group-search" className="sr-only">Rechercher</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input type="text" id="input-group-search" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Recherche..."/>
+                            </div>
+                        </div> */}
+                        
+                       <div
+    id="accordion-flush"
+    data-accordion="collapse"
+    data-active-classes="text-black dark:text-white"
+    data-inactive-classes="text-gray-500 dark:text-gray-400"
+    className="flex flex-wrap " // Utilisation de flexbox pour mieux contrôler les lignes
+>
+                            
+                        
                             {/* Sous-catégories */}
-                              <div className="mt-4">
+                              <div className="w-1/2">
                                 
                                 <h2 id="category-heading">
                                 <button type="button" onClick={toggleSousCategory} className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#category-body" aria-expanded="true" aria-controls="category-body">
@@ -358,41 +767,53 @@ useEffect(() => {
                                     )}
                                 </button>
                             </h2>
-                            {sousCategory && (
-                                subcategory.length > 0 ? (
-                                  <div className="py-2 font-light border-b border-gray-200 dark:border-gray-600">
-                                    <ul className="space-y-2">
-                                      {subcategory.map((subCat, index) => (
-                                        <li key={index} className="flex items-center">
-                                          <input
-                                            id={`subcategory-${index}`}
-                                            type="checkbox"
-                                            value={subCat} // Valeur de la sous-catégorie
-                                            onChange={handleSubcategoryChange} // Gestionnaire d'événement
-                                            checked={selectSubcategory.includes(subCat)} 
-                                            className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28]"
-                                          />
-                                          <label
-                                            htmlFor={`subcategory-${index}`}
-                                            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                                          >
-                                            {subCat}
-                                          </label>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ) : (
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    Aucune sous-catégorie disponible
-                                  </p>
-                                )
-                              )}
-                              
+                            {sousCategory && (Object.keys(categoryMap).length > 0 ? (
+                                    <div className="py-2 font-light border-b border-gray-200 dark:border-gray-600">
+                                      {Object.entries(categoryMap).map(([key, subcategories]) => {
+                                        const categoryName = getCategoryNameById(key); // Utilisation de la fonction pour obtenir le nom de la catégorie
+
+                                        return (
+                                          <div key={key} className="mb-4">
+                                            {/* Affiche le nom de la catégorie */}
+                                            <h3 className="text-sm font-medium text-left text-gray-500 mb-2">
+                                              {categoryName || `Clé ${key}`} {/* Fallback si le nom n'est pas trouvé */}
+                                            </h3>
+                                            <ul className="space-y-2">
+                                              {/* Affiche les sous-catégories */}
+                                              {subcategories.map((subCat) => (
+                                                <li key={subCat.id} className="flex items-center">
+                                                  <input
+                                                    id={`subcategory-${subCat.id}`}
+                                                    type="checkbox"
+                                                    value={subCat.id} // ID de la sous-catégorie
+                                                    onChange={handleSubcategoryChange} // Gestionnaire d'événement
+                                                    checked={selectedSubcategoryIds.includes(subCat.id)} // Si la sous-catégorie est sélectionnée
+                                                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28]"
+                                                  />
+                                                  <label
+                                                    htmlFor={`subcategory-${subCat.id}`}
+                                                    className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                                                  >
+                                                    {subCat.Name}
+                                                  </label>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  ) : (
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                      Aucune sous-catégorie disponible
+                                    </p>
+                                  ))}
+                                                          
                               </div>
                             {/* <!-- Price --> */}
+                          <div className="w-1/2">
                             <h2 id="price-heading">
-                                <button onClick={togglePrice}  type="button" className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#price-body" aria-expanded="true" aria-controls="price-body">
+                                <button onClick={togglePrice}  type="button" className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" >
                                     <span>Prix</span>
                                     {!price && (
                                     <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -408,18 +829,18 @@ useEffect(() => {
                                 </button>
                             </h2>
                             {price && (
-                            <div id="price-body" className="" aria-labelledby="price-heading">
-                                <div className="flex items-center py-2 space-x-3 font-light border-b border-gray-200 dark:border-gray-600">
+                            <div id="price-body" className="mr-2" aria-labelledby="price-heading">
                                 
-                                    <label for="number-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">De</label>
+                                    <label for="number-input" className="block my-1 text-sm font-medium text-left text-gray-500 dark:text-white">De</label>
                                     <input type="number" value={minPrice} onChange={(e)=>setMinPrice(e.target.value)} id="number-input"  aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="0" required />
                                 
                                 
-                                    <label for="number-input" className="block my-2 text-sm font-medium text-gray-900 dark:text-white">À</label>
+                                    <label for="number-input" className="block my-1 text-sm font-medium text-left text-gray-500 dark:text-white">À</label>
                                     <input type="number" id="number-input" value={maxPrice} onChange={(e)=>setMaxPrice(e.target.value)} aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999" required />
                                 
-                                    </div>
+                                    
                             </div>)}
+                            </div>
                             {/* <!-- Worldwide Shipping --> */}
                             {/* <h2 id="worldwide-shipping-heading">
                                 <button onClick={toggleShipping} type="button" className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#worldwide-shipping-body" aria-expanded="true" aria-controls="worldwide-shipping-body">
@@ -468,151 +889,153 @@ useEffect(() => {
                             </div>
                             )} */}
                             {/* <!-- Rating --> */}
-                            <h2 id="rating-heading">
-                                <button onClick={toggleRating} type="button" className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#rating-body" aria-expanded="true" aria-controls="rating-body">
-                                    <span>Évaluation</span>
-                                    {!rating && (
-                                    <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                                    </svg>)}
-                                    {rating && (
-                                       
-                                      <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                                    </svg>)}
-                                </button>
-                            </h2>
-                            {rating && (
-                            <div id="rating-body" className=""  aria-labelledby="rating-heading">
-                                <div className="py-2 space-y-2 font-light border-b border-gray-200 dark:border-gray-600">
-                                    <div className="flex items-center">
-                                        <input id="five-stars" type="checkbox" checked={selectedRatings.includes(5)} value="5" onClick={() => handleRatingSelect(5)}name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
-                                        <label for="five-stars" className="flex items-center ml-2">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>First star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Second star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Third star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fourth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fifth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <input id="four-stars" type="checkbox" value="4" checked={selectedRatings.includes(4)}  onClick={() => handleRatingSelect(4)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
-                                        <label for="four-stars" className="flex items-center ml-2">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>First star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Second star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Third star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fourth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fifth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <input id="three-stars" type="checkbox" checked={selectedRatings.includes(3)}  value="3" onClick={() => handleRatingSelect(3)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
-                                        <label for="three-stars" className="flex items-center ml-2">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>First star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Second star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Third star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fourth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fifth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <input id="two-stars" type="checkbox" value="2" checked={selectedRatings.includes(2)}  onClick={() => handleRatingSelect(2)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
-                                        <label for="two-stars" className="flex items-center ml-2">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>First star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Second star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Third star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fourth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fifth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <input id="one-star" type="checkbox" checked={selectedRatings.includes(1)}  value="1"  onClick={() => handleRatingSelect(1)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
-                                        <label for="one-star" className="flex items-center ml-2">
-                                            <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>First star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Second star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Third star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fourth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <title>Fifth star</title>
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-                                </div>
+                            <div className="w-1/2">
+                              <h2 id="rating-heading">
+                                  <button onClick={toggleRating} type="button" className="flex items-center justify-between w-full py-2 px-1.5 text-sm font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700" data-accordion-target="#rating-body" aria-expanded="true" aria-controls="rating-body">
+                                      <span>Évaluation</span>
+                                      {!rating && (
+                                      <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                          <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                      </svg>)}
+                                      {rating && (
+                                        
+                                        <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                          <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                      </svg>)}
+                                  </button>
+                              </h2>
+                              {rating && (
+                              <div id="rating-body" className=""  aria-labelledby="rating-heading">
+                                  <div className="py-2 space-y-2 font-light border-b border-gray-200 dark:border-gray-600">
+                                      <div className="flex items-center">
+                                          <input id="five-stars" type="checkbox" checked={selectedRatings.includes(5)} value="5" onClick={() => handleRatingSelect(5)}name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
+                                          <label for="five-stars" className="flex items-center ml-2">
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>First star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Second star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Third star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fourth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fifth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                          </label>
+                                      </div>
+                                      <div className="flex items-center">
+                                          <input id="four-stars" type="checkbox" value="4" checked={selectedRatings.includes(4)}  onClick={() => handleRatingSelect(4)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
+                                          <label for="four-stars" className="flex items-center ml-2">
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>First star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Second star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Third star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fourth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fifth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                          </label>
+                                      </div>
+                                      <div className="flex items-center">
+                                          <input id="three-stars" type="checkbox" checked={selectedRatings.includes(3)}  value="3" onClick={() => handleRatingSelect(3)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
+                                          <label for="three-stars" className="flex items-center ml-2">
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>First star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Second star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Third star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fourth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fifth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                          </label>
+                                      </div>
+                                      <div className="flex items-center">
+                                          <input id="two-stars" type="checkbox" value="2" checked={selectedRatings.includes(2)}  onClick={() => handleRatingSelect(2)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
+                                          <label for="two-stars" className="flex items-center ml-2">
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>First star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Second star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Third star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fourth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fifth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                          </label>
+                                      </div>
+                                      <div className="flex items-center">
+                                          <input id="one-star" type="checkbox" checked={selectedRatings.includes(1)}  value="1"  onClick={() => handleRatingSelect(1)} name="rating" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-[#011d28] focus:ring-[#011d28] "/>
+                                          <label for="one-star" className="flex items-center ml-2">
+                                              <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>First star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Second star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Third star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fourth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                              <svg aria-hidden="true" className="w-5 h-5 text-gray-300 dark:text-gray-500" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                  <title>Fifth star</title>
+                                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                              </svg>
+                                          </label>
+                                      </div>
+                                  </div>
+                              </div>
+                              )}
                             </div>
-                            )}
                         </div>
                     </div>)}
                     </div>
@@ -628,28 +1051,37 @@ useEffect(() => {
                     dark:focus:ring-gray-700 sm:w-auto"
                     onClick={toggleTrier}
                     >
-                    <svg className="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M7 4l3 3M7 4 4 7m9-3h6l-6 6h6m-6.5 10 3.5-7 3.5 7M14 18h4" />
-                    </svg>
+                   
                     Trier
-                    <svg className="-me-0.5 ms-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
-                    </svg>
+                    {trier && (
+                                    <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5 rotate-180 shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>)}
+                                    {!trier && (
+                                       
+                                      <svg aria-hidden="true" data-accordion-icon="" className="w-5 h-5  shrink-0" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>
+                                    )}
                     </button>
                     {/* DropDown Menu Trier */}
                     {trier &&
                         <div id="dropdownSort1" className="right-0  divide-y divide-gray-100  overflow-y-auto  dark:divide-gray-600   absolute  z-10 w-[250px] mx-auto max-w-sm space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-800" data-popper-placement="bottom">
                         <div className="flex items-center justify-between pt-2">
                             <h6 className="text-sm font-medium text-black dark:text-white">Trier</h6>
-                            {/* <div className="flex items-center space-x-3">
-                                <p onClick={(e)=>handleDeleteTrier} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
-                            </div> */}
+                            <div className="flex items-center space-x-3">
+                                <p onClick={()=>{navigate(`/products`);
+                                                setSelectedOption('');}} className="cursor-pointer flex items-center text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Effacer tout</p>
+                            </div>
                         </div>
                         <ul className="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400" aria-labelledby="sortDropdownButton">
                         <li className={` cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
               selectedOption === 'bestSellers' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
             }`}
-            onClick={() => handleSelection('bestSellers')}>
+            onClick={() => {
+              handleSelection('bestSellers');
+              toggleTrier();
+            }}>            
           
             Meilleures ventes
           
@@ -657,7 +1089,13 @@ useEffect(() => {
         <li className={`cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
               selectedOption === 'topRated' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
             }`}
-            onClick={() => handleSelection('topRated')}>
+            
+            onClick={() => {
+              handleSelection('topRated');
+              toggleTrier();
+            }}>   
+            
+            
           
             Mieux notés
           
@@ -665,7 +1103,12 @@ useEffect(() => {
         <li className={`cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
               selectedOption === 'newest' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
             }`}
-            onClick={() => handleSelection('newest')}>
+            
+            onClick={() => {
+              handleSelection('newest');
+              toggleTrier();
+            }}>
+            
           
             Dernières nouveautés
          
@@ -682,22 +1125,23 @@ useEffect(() => {
                
       </div>
     </div>
-    <div className="">
+    <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
       {filteredProducts.length>0? (
         filteredProducts.map((product) => (
+          <Link to={`/product/${product.UID}`} state={{ product }}>
           <div
             key={product.UID}
-            className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            className="h-[500px] w-33 px-3 gap-x-4 rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800 transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-lg"
           >
             
             <div className="h-56 ">
-            <Link to={`/product/${product.UID}`} state={{ product }}>
+            
                 <img
                   className="mx-auto h-full object-contain"
                   src={product.Image[0]} // Affiche la première image
                   alt={`Image of ${product.Product}`}
                 />
-              </Link>
+              
             </div>
             <div className="pt-6">
               <div className="mb-4 flex items-center justify-between gap-4">
@@ -756,9 +1200,11 @@ useEffect(() => {
                     </svg>
                   ))}
                 </div>
+                {product.Rating !=0 && 
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {product.Rating} / 5
                 </span>
+                }
               </div>
 
               {/* <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -788,18 +1234,26 @@ useEffect(() => {
             </li>)}
             
           </ul>
+          
               <div className="mt-4 flex items-center justify-between">
                 <div>
+                <div className="text-xs  text-gray-900 dark:text-white">
+                    Genre : 
+                    <span > {product.Gender}</span>
+                  </div>
                   {/* {product.OldPrice > product.Price && (
                     <div className="text-sm text-gray-500 line-through dark:text-gray-400">
-                      {product.OldPrice.toFixed(2)}
+                      {product.OldPrice}
                       <span className="ml-1 text-xs">Dt</span>
                     </div>
                   )} */}
+                  
                   <div className="text-lg font-bold text-gray-900 dark:text-white">
-                    {product.Price.toFixed(2)}
+                    {product.Price}
                     <span className="ml-1 text-xs">Dt</span>
                   </div>
+                  
+                 
                 </div>
 
               <Link to={`/product/${product.UID}`} state={{ product }}>
@@ -815,6 +1269,7 @@ useEffect(() => {
               </div>
             </div>
           </div>
+          </Link>
         ))):
         (
           <div className="flex flex-col items-center justify-center min-h-[200px] bg-gray-50 p-6 rounded-lg shadow-md dark:bg-gray-800">
@@ -830,7 +1285,12 @@ useEffect(() => {
       
     </div>
     
-    
+    <Pagination handlePrevPage={handlePrevPage}
+                                    handleNextPage={handleNextPage}
+                                    handlePageChange={handlePageChange}
+                                    totalPages={totalPages}
+                                    currentPage={currentPage}
+                                    />
   </div>
 
  

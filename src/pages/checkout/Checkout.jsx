@@ -1,14 +1,18 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { MyContext } from '../../App';
 import { Link, useNavigate } from 'react-router-dom';
-
+import axios from 'axios'
 const Checkout = () => {
-  const { panier, setPanier } = useContext(MyContext);
-      console.log("panier ",panier)
-      console.log("panier.length ",panier.length)
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const { panier, setPanier } = useContext(MyContext);
+    console.log("panier ",panier)
+    console.log("panier.length ",panier.length)
     const [showModal, setShowModal] = useState(false);
     const [gouvernoratModal, setGouvernoratModal] = useState(false);
-    const [selectedGouvernorat, setSelectedGouvernorat] = useState("");
+
+    const { account,setAccount } = useContext(MyContext);
+    const [selectedGouvernorat, setSelectedGouvernorat] = useState(account ? account.Gouvernorat : "");
     
     // const [showNotification, setShowNotification] = useState(false);
 
@@ -24,6 +28,7 @@ const Checkout = () => {
       const handleAccept = () => {
         setPanier((prev) => {
           const updatedPanier = prev.filter((_, idx) => idx !== itemIndex);
+          setPanier(updatedPanier);
           localStorage.setItem("panier", JSON.stringify(updatedPanier)); // Met à jour le localStorage
           return updatedPanier;
         });
@@ -41,17 +46,17 @@ const Checkout = () => {
     'Sfax', 'Kairouan', 'Kasserine', 'Sidi Bouzid', 'Gabes', 'Mednine', 'Tataouine',
     'Gafsa', 'Tozeur', 'Kebili'
   ];
-
   const [order, setOrder] = useState({
-    nom: '',
-    gouvernorat: '',
-    delegation: '',
-    adresse: '',
-    phone1: '',
-    phone2: '',
-    remarque: '',
-    panier:[],
-  });
+    nom: account ? account.Nom : "",
+    gouvernorat: account ? account.Gouvernorat : "",
+    delegation: account ? account.Delegation : "",
+    adresse: account ? account.Adresse : "",
+    phone1: account ? account.Phone_1 : "",
+    phone2: account ? account.Phone_2 : "",
+    remarque: "",
+    panier: [],
+});
+  
   const openModal = () => {
     setShowModal(true);
     setOrder((prevOrder) => {
@@ -102,30 +107,82 @@ const Checkout = () => {
     setErrorMessage(''); // Réinitialise le message d'erreur si tout est valide
     return true;
   };
-
+  
   const navigate = useNavigate();
   // Fonction pour passer la commande
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Vérifie la validité du formulaire
     if (validateForm()) {
-      setOrder((prevOrder) => {
-        const updatedOrder = {
-          ...prevOrder,
-          gouvernorat: selectedGouvernorat,  // Remplace le panier actuel par le panier passé
-        };
-        console.log(updatedOrder);  // Affiche l'order mis à jour dans la console
-        return updatedOrder;
-      });
-      // Si valide, ferme le modal
-      closeModal();
-      // Logique pour soumettre la commande, par exemple :
-      console.log("Commande passée :", order);
-      setPanier([]);
-      localStorage.removeItem("panier");
-      navigate('/');
-      localStorage.setItem('showNotification', 'true');
+        setOrder((prevOrder) => {
+            const updatedOrder = {
+                ...prevOrder,
+                gouvernorat: selectedGouvernorat,
+            };
+            console.log(updatedOrder);  // Affiche l'ordre mis à jour dans la console
+            return updatedOrder;
+        });
+
+        let data = {};
+        if (account) {
+            data = {
+                User_id: account.id,
+                Gouvernorat: selectedGouvernorat,
+                Delegation: order.delegation,
+                Phone1: order.phone1,
+                Phone2: order.phone2,
+                Remarque: order.remarque,
+                adresse_complet:order.adresse,
+                Panier: panier.map(item => ({
+                    Product_UID: item.UID,
+                    Size: item.size,
+                    Color: item.color,
+                    Quantity: item.quantity,
+                    Price: parseFloat(item.Price),
+                })),
+                status: "Confirmation",
+            };
+        } else {
+            data = {
+                Gouvernorat: selectedGouvernorat,
+                Delegation: order.delegation,
+                Phone1: order.phone1,
+                Phone2: order.phone2,
+                Remarque: order.remarque,
+                adresse_complet:order.adresse,
+                Panier: panier.map(item => ({
+                    Product_UID: item.UID,
+                    Size: item.size,
+                    Color: item.color,
+                    Quantity: item.quantity,
+                    Price: parseFloat(item.Price),
+                })),
+                status: "Confirmation",
+            };
+        }
+
+        try {
+            const response = await axios.post(`${API_URL}/order`, data, {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+    
+            // Si valide, ferme le modal
+            closeModal();
+            // Logique pour soumettre la commande, par exemple :
+            console.log("Commande envoyée avec succès :", response.data);
+
+            setPanier([]);
+            localStorage.removeItem("panier");
+            navigate('/');
+            localStorage.setItem('showNotification', 'true');
+          } catch (error) {
+            setErrorMessage(error.response.data.message);
+            console.error("Erreur lors de l'envoi de la commande :", error);
+            // alert("Une erreur est survenue lors de l'envoi de la commande.");
+        }
 
     }
   };
@@ -148,6 +205,10 @@ const handleDecrement = (index) => {
     return updatedPanier;
   });
 };
+useEffect(() => {
+    // Forcer le scroll au top lors de l'ouverture du composant
+    window.scrollTo(0, 0);
+  }, []); // Le tableau vide garantit que cela ne se produit qu'une seule fois, lors du montage du composant
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -174,12 +235,14 @@ const handleDecrement = (index) => {
                                   }`}
                                 >
                                 <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                                          <a href="#" className="shrink-0 md:order-1">
+                                  
+                                            <div className="shrink-0 md:order-1">
+
                                               <img className="h-20 w-20 dark:hidden" 
                                               src={item.image} // Affiche la première image du produit
                                               alt={item.Product}
                                               />
-                                          </a>
+                                          </div>
                           
                                           <label for="counter-input" className="sr-only">Choose quantity:</label>
                                           <div className="flex items-center justify-between md:order-3 md:justify-end">
@@ -246,14 +309,14 @@ const handleDecrement = (index) => {
                                               <div className="flex items-center gap-4">
                                                   <button  type="button" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline dark:text-gray-400 dark:hover:text-white">
                                                   <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
+                                                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
                                                   </svg>
                                                   Ajouter aux favoris
                                                   </button>
                               
                                                   <button onClick={(event) => handleOpenModal(event, index)} type="button" className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
                                                   <svg className="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6" />
                                                   </svg>
                                                   Supprimer
                                                   </button>
@@ -343,20 +406,14 @@ const handleDecrement = (index) => {
         <div className="space-y-4">
           <div className="space-y-2">
             <dl className="flex items-center justify-between gap-4">
-              <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Prix initial</dt>
-              <dd className="text-base font-medium text-gray-900 dark:text-white">{(panier.reduce((sum, item) => sum + item.OldPrice * item.quantity, 0)).toFixed(2)}
+              <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Prix</dt>
+              <dd className="text-base font-medium text-gray-900 dark:text-white">{(panier.reduce((sum, item) => sum + item.Price * item.quantity, 0)).toFixed(2)}
               <span className="ml-1 text-xs">Dt</span>
 
               </dd>
             </dl>
 
-            <dl className="flex items-center justify-between gap-4">
-              <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Solde</dt>
-              <dd className="text-base font-medium text-green-600">-{(panier.reduce((sum, item) => sum + (item.OldPrice-item.Price) * item.quantity, 0)).toFixed(2)}
-
-              <span className="ml-1 text-xs">Dt</span>
-              </dd>
-            </dl>
+           
 
             <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Livraison</dt>
@@ -387,10 +444,18 @@ const handleDecrement = (index) => {
 
 <span className="ml-1 text-xs">Dt</span></dd>
           </dl>
+          <dl className="flex items-center justify-between gap-4">
+              <dt className="text-base font-normal text-gray-500 dark:text-gray-400">Solde</dt>
+              <dd className="text-base font-medium text-green-600">-{(panier.reduce((sum, item) => sum + (item.OldPrice-item.Price) * item.quantity, 0)).toFixed(2)}
+
+              <span className="ml-1 text-xs">Dt</span>
+              </dd>
+            </dl>
         </div>
         <div className="relative">
             <button onClick={() => openModal()} className="flex w-full items-center justify-center rounded-lg bg-[#011d28] hover:bg-[#011d28e6] px-5 py-2.5 text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-[#011d28e6] ">
             Passer la commande</button>
+            
             {showModal &&(
             
             <div id="crud-modal"  tabindex="-1" aria-hidden="true" className="overflow-y-auto overflow-x-hidden fixed inset-0 z-50 flex justify-center items-center">
@@ -412,7 +477,7 @@ const handleDecrement = (index) => {
       </h3>
                             <button onClick={() => setShowModal(false)} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                 <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                                 </svg>
                                 <span className="sr-only">Close modal</span>
                             </button>
@@ -513,11 +578,11 @@ const handleDecrement = (index) => {
                             </div>
                             {/* Message d'erreur */}
                               {errorMessage && (
-                                <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-                                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                                <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                   <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                                 </svg>
-                                <span class="sr-only">Info</span>
+                                <span className="sr-only">Info</span>
                                 <div>
                                 {errorMessage}
                                 </div>
@@ -540,7 +605,7 @@ const handleDecrement = (index) => {
           <Link to="/" title="" className="inline-flex items-center gap-2 text-sm font-medium text-[#011d28] hover:underline  ">
           Continuer vos achats
             <svg className="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
             </svg>
           </Link>
         </div>

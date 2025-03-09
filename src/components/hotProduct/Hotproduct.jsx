@@ -38,9 +38,10 @@ const Hotproduct = ({ hotProduct }) => {
 
 <Link to={`/product/${hotProduct.UID}`} state={{ hotProduct }}>
   <section className="bg-white border border-gray-200 dark:bg-gray-900 rounded-lg shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-3xl"
-  style={{
-      backgroundImage: 'linear-gradient(#ffffff, #fff0f0)',
-    }}>
+  // style={{
+  //     backgroundImage: 'linear-gradient(#ffffff, #fff0f0)',
+  //   }}
+    >
     <div className="grid max-w-screen-xl px-4 sm:px-8 md:px-12 lg:px-20 py-8 sm:py-12 mx-auto md:gap-4 lg:gap-8 grid-cols-1 md:grid-cols-12">
       
       {/* Texte */}
@@ -61,7 +62,7 @@ const Hotproduct = ({ hotProduct }) => {
           {hotProduct.Product}
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6">
-          {hotProduct.Description}
+        {hotProduct.Description?.substring(0, 255)}...
         </p>
         
         <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">

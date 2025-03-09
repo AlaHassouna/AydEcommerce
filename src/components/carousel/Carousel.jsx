@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
+import c0 from '../../assets/images/c0.webp';
+import c1 from '../../assets/images/c1.png';
+import c2 from '../../assets/images/c2.png';
 
 
 const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
-    "https://marketplace.canva.com/EAE8hiyAF3M/1/0/1600w/canva-fashion-style-landscape-banner-mc_7rOFLEMc.jpg",
-    "https://marketplace.canva.com/EAFdLCV6VuU/1/0/1600w/canva-VKnBBA3Gn7U.jpg",
-    "https://marketplace.canva.com/EAFzBsWkufQ/1/0/1600w/canva-Q3yBKYqevwA.jpg"
-    
+    // "https://marketplace.canva.com/EAE8hiyAF3M/1/0/1600w/canva-fashion-style-landscape-banner-mc_7rOFLEMc.jpg",
+    // "https://marketplace.canva.com/EAFdLCV6VuU/1/0/1600w/canva-VKnBBA3Gn7U.jpg",
+    // "https://marketplace.canva.com/EAFzBsWkufQ/1/0/1600w/canva-Q3yBKYqevwA.jpg"
+    c0,
+    c1,
+    c2
     
     
   ];

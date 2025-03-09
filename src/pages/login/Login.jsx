@@ -3,10 +3,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import logo from '../../assets/images/logo1.png';
 import { Link } from 'react-router-dom';
 import { MyContext } from '../../App';
-
+import axios from 'axios'
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+
   const context= useContext(MyContext)
-  const [errorMessage, setErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   const [formData, setFormData] = useState({
     email: '',
@@ -18,48 +20,46 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const [loading, setLoading] = useState(false);
+
+ 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const hashedPassword = await bcrypt.hash(formData.password, 10); // Hash du mot de passe
-    const loginData = {
-      username: formData.email,
-      password: formData.password
-    };
-    console.log(loginData)
-    try {
-      const res = await fetch('https://localhost:7057/api/Account/Login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
+    setLoading(true); // Activer le mode chargement
+    setErrorMessage(""); // Réinitialiser les erreurs
 
-      if (res.ok) {
-        const data = await res.json();
-        setResponse(data);
-        console.log('Login successful:', data);
-        // if(data.isAdmin=="true"){
-        context.setUser(data)
-        context.setIsLogin(true)
-        localStorage.setItem("isLoggedIn", "true"); 
-        localStorage.setItem("user", JSON.stringify(data));
-        console.log("context.user ",context.user)
-      // }
-        // navigate('/dashboard');
-      } else {
-        setErrorMessage(true)
-        console.error('Login failed:', res.status);
+    const loginData = {
+      email: formData.email,
+      password: formData.password,
+    };
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/users/login`,
+        loginData
+      );
+
+      if (response.data) {
+        const data = response.data;
+        context.setAccount(data.user);  // 🔹 Met à jour l'état de account après connexion
+        context.setAccount(data.user);
+        context.setIsLogin(true);
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("CC_Token", data.token);
       }
     } catch (error) {
-      
-      console.error('Error:', error);
+      console.error("Erreur de connexion:", error);
+      setErrorMessage("Erreur de connexion. Vérifiez votre email et mot de passe.");
+    } finally {
+      setLoading(false); // Désactiver le mode chargement après la requête
     }
   };
  // Log context.user whenever it changes
-// useEffect(() => {
-//   console.log("Updated context.user:", context.user);
-// }, [context.user]);
+useEffect(() => {
+  console.log("Updated context.account:", context.account);
+}, [context.account]);
   return (
     <section class="flex items-center justify-center ">
 
@@ -110,9 +110,18 @@ const Login = () => {
                             </div>
                             <a href="#" class="text-sm font-medium text-[#011d28e6] hover:underline ">Mot de passe oublié ?</a>
                         </div>
-                        
-                        <button type="submit" class="w-full text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-white dark:text-black ">Se connecter</button>
-                        <div class="inline-flex items-center justify-center w-full">
+                        {errorMessage && (
+                            <p className="text-red-500 text-sm">{errorMessage}</p>
+                          )}
+
+                          <button
+                            type="submit"
+                            className="w-full text-white bg-[#011d28] hover:bg-[#011d28e6] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-white dark:text-black"
+                            disabled={loading} // Désactiver le bouton pendant le chargement
+                          >
+                            {loading ? "Connexion..." : "Se connecter"} {/* Texte changeant */}
+                          </button>
+                        {/* <div class="inline-flex items-center justify-center w-full">
                           <hr class=" mb-0 mt-0 w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
                           <span class=" absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">ou</span>
                       </div>
@@ -121,7 +130,7 @@ const Login = () => {
                             <path fill-rule="evenodd" d="M12.037 21.998a10.313 10.313 0 0 1-7.168-3.049 9.888 9.888 0 0 1-2.868-7.118 9.947 9.947 0 0 1 3.064-6.949A10.37 10.37 0 0 1 12.212 2h.176a9.935 9.935 0 0 1 6.614 2.564L16.457 6.88a6.187 6.187 0 0 0-4.131-1.566 6.9 6.9 0 0 0-4.794 1.913 6.618 6.618 0 0 0-2.045 4.657 6.608 6.608 0 0 0 1.882 4.723 6.891 6.891 0 0 0 4.725 2.07h.143c1.41.072 2.8-.354 3.917-1.2a5.77 5.77 0 0 0 2.172-3.41l.043-.117H12.22v-3.41h9.678c.075.617.109 1.238.1 1.859-.099 5.741-4.017 9.6-9.746 9.6l-.215-.002Z" clip-rule="evenodd"/>
                           </svg>
                           <span>Continuer avec Google</span>
-                        </button>
+                        </button> */}
 
 
                         

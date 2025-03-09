@@ -10,11 +10,38 @@ import SignUp from "./pages/signup/SignUp";
 import { createContext, useEffect, useState } from "react";
 import ProductsPage from "./pages/productsPage/ProductsPage";
 import Checkout from "./pages/checkout/Checkout";
+import Profil from "./pages/profil/Profil";
 export const MyContext = createContext();
 
 function App() {
-  const [isLogin,setIsLogin]=useState(true);
+  const [isLogin,setIsLogin]=useState();
   const [panier, setPanier] = useState([]);
+  // const [account,setAccount]=useState({
+  //   "Nom":"Ala Hsouna",
+  //   "Email": "exemple@gmail.com",
+  //   "Adresse": "123 Rue de la Paix, Tunis, Tunisie",
+  //   "Phone_1": "+216 98 123 456",
+  //   "Phone_2": "+216 29 654 321",
+  //   "Gouvernorat": "Tunis",
+  //   "Delegation": "La Marsa"
+  // })
+  // Récupérer les données de 'user' depuis localStorage
+  const [account, setAccount] = useState({});
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+  
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setAccount(parsedUser);
+    }
+  }, []); // 🔹 Mettre un tableau vide [] pour s'exécuter une seule fois au chargement de la page
+  
+  // useEffect(() => {
+  //   console.log("account ",account)
+    
+  // }, [account]); 
+  
 
   useEffect(() => {
     const savedPanier = localStorage.getItem("panier");
@@ -76,12 +103,15 @@ function App() {
       return updatedPanier; // Retourner le panier mis à jour
     });
   };// Ce useEffect ne s'exécute qu'une seule fois au premier rendu
+
   const values={
     panier,
     setPanier,
     isLogin,
     setIsLogin,
-    addToCart
+    addToCart,
+    account,
+    setAccount
   }
   return (
     <Router>
@@ -93,14 +123,26 @@ function App() {
           
           <Route path="/product/:id" element={<Product/>}></Route>
 
-          <Route path="/login" element={<Login/>}></Route>
-          <Route path="/register" element={<SignUp/> }></Route>
+          {/* <Route path="/login" element={<Login/>}></Route> */}
+          <Route 
+          path="/login" 
+          element={Object.keys(account).length === 0 ? <Login/> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/register" 
+          element={Object.keys(account).length === 0 ? <SignUp/> : <Navigate to="/" />} 
+        />
+          {/* <Route path="/register" element={<SignUp/> }></Route> */}
           {/* Route pour afficher tous les produits */}
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/checkout" element={<Checkout />} />
         
         {/* Route pour afficher les produits filtrés par catégorie */}
         <Route path="/products/:categorie" element={<ProductsPage />} />
+        <Route 
+          path="/profil" 
+          element={Object.keys(account).length === 0 ? <Navigate to="/login" /> : <Profil />} 
+        />
         </Routes>
       
         <Footer/>
