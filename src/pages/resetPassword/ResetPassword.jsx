@@ -10,6 +10,7 @@ const ResetPasswordPage = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false); // Ajout de l'état loading
   const navigate = useNavigate(); // Initialisez useNavigate
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ const ResetPasswordPage = () => {
     setSuccess(''); // Réinitialiser les messages de succès
 
     try {
-      const response = await axios.post('http://localhost:8000/api/reset-password', {
+      const response = await axios.post(`${API_URL}/reset-password`, {
         token: token,
         password: password,
         password_confirmation: passwordConfirmation,

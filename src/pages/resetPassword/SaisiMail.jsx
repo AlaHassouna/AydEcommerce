@@ -6,6 +6,7 @@ const SaisiMail = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false); // État pour gérer le chargement
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ const SaisiMail = () => {
 
     try {
       // Envoi de la requête à l'API
-      const response = await axios.post('http://localhost:8000/api/forgot-password', {
+      const response = await axios.post(`${API_URL}//forgot-password`, {
         email: email,
       });
 
