@@ -277,7 +277,7 @@ const [mockCategories, setMockCategories] = useState([]); // État pour stocker 
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Delivery Addresses </a></li>
                      <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Billing Data </a></li> */}
                    
-                     <button onClick={(e)=>handleLogOut(e)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Sign Out </button>
+                     <button onClick={(e)=>handleLogOut(e)} class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Déconnecter </button>
                    
                    </ul>
                

@@ -323,7 +323,7 @@ useEffect(() => {
   const trieValue = queryParams.get('trie');
   console.log("trieValue",trieValue)
 
-  if (genderParam && (genderParam === "homme" || genderParam === "femme")) {
+  if (genderParam && (genderParam === "homme" || genderParam === "femme" || genderParam === "unisex")) {
     setGender(genderParam);
   }else{
     setGender("")
@@ -607,6 +607,7 @@ const handleSelection = (option) => {
                                             
                                               // Redirigez vers l'URL mise à jour
                                               navigate(`${currentUrl.pathname}?${params.toString()}`);
+                                              setCurrentPage(1);
                                             
                                               // Mettez à jour l'état
                                               setGender('femme');
@@ -633,7 +634,7 @@ const handleSelection = (option) => {
                                             
                                               // Redirigez vers l'URL mise à jour
                                               navigate(`${currentUrl.pathname}?${params.toString()}`);
-                                            
+                                              setCurrentPage(1);
                                               // Mettez à jour l'état
                                               setGender('HOMME');
                                               setGenre(!genre);
@@ -642,7 +643,29 @@ const handleSelection = (option) => {
                                             HOMME
                                           
                                         </li>
-                                        
+                                        <li className={`cursor-pointer group inline-flex w-full items-center rounded-md px-3 py-2 text-sm  hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white ${
+                                              gender === 'unisex' ? 'font-bold text-gray-800 bg-gray-200' : 'text-gray-500'
+                                            }`}
+                                            onClick={() => {
+                                              // Obtenez l'URL courante et les paramètres de requête existants
+                                              const currentUrl = new URL(window.location.href);
+                                              const params = new URLSearchParams(currentUrl.search);
+                                            
+                                              // Mettez à jour ou ajoutez le paramètre "gender"
+                                              params.set('gender', 'unisex');
+                                            
+                                              // Redirigez vers l'URL mise à jour
+                                              navigate(`${currentUrl.pathname}?${params.toString()}`);
+                                              setCurrentPage(1);
+                                              // Mettez à jour l'état
+                                              setGender('UNISEX');
+                                              
+                                              setGenre(!genre);
+                                            }}>
+                                          
+                                            UNISEX
+                                          
+                                        </li>
             
                                   </ul>
                           </div>

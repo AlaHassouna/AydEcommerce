@@ -23,7 +23,7 @@ const SaisiMail = () => {
 
     try {
       // Envoi de la requête à l'API
-      const response = await axios.post(`${API_URL}//forgot-password`, {
+      const response = await axios.post(`${API_URL}/forgot-password`, {
         email: email,
       });
 
