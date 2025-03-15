@@ -11,6 +11,8 @@ import { createContext, useEffect, useState } from "react";
 import ProductsPage from "./pages/productsPage/ProductsPage";
 import Checkout from "./pages/checkout/Checkout";
 import Profil from "./pages/profil/Profil";
+import ResetPasswordPage from "./pages/resetPassword/ResetPassword";
+import SaisiMail from "./pages/resetPassword/SaisiMail";
 export const MyContext = createContext();
 
 function App() {
@@ -143,8 +145,10 @@ function App() {
           path="/profil" 
           element={Object.keys(account).length === 0 ? <Navigate to="/login" /> : <Profil />} 
         />
+        
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/reset-password" element={<SaisiMail/>} />
         </Routes>
-      
         <Footer/>
         </MyContext.Provider>
     </Router>

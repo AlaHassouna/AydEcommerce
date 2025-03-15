@@ -108,7 +108,7 @@ useEffect(() => {
                                   <label for="remember" class="text-gray-500 dark:text-gray-300">Se souvenir de moi</label>
                                 </div>
                             </div>
-                            <a href="#" class="text-sm font-medium text-[#011d28e6] hover:underline ">Mot de passe oublié ?</a>
+                            <Link to="/reset-password" class="text-sm font-medium text-[#011d28e6] hover:underline ">Mot de passe oublié ?</Link>
                         </div>
                         {errorMessage && (
                             <p className="text-red-500 text-sm">{errorMessage}</p>

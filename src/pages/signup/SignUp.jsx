@@ -78,22 +78,22 @@ const SignUp = () => {
           `${API_URL}/users/login`,
           loginData
         );
-        console.log("loginResponse",loginResponse)
+        // console.log("loginResponse",loginResponse)
   
         if (loginResponse.data) {
-          console.log("loginResponse.data",loginResponse.data)
+          // console.log("loginResponse.data",loginResponse.data)
           const userData = loginResponse.data;
           context.setAccount(userData.user);
           context.setIsLogin(true);
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("user", JSON.stringify(userData.user));
           localStorage.setItem("CC_Token", userData.token);
-          console.log("Login successful:", userData);
+          // console.log("Login successful:", userData);
         }
       }
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement ou de la connexion:", error);
-      console.log("Type de error.response.data:", typeof error.response.data);
+      // console.error("Erreur lors de l'enregistrement ou de la connexion:", error);
+      // console.log("Type de error.response.data:", typeof error.response.data);
       if (error.response.data.includes("The email has already been taken.")) {
         setErrorMessage("Un compte existe déjà avec cet email.");
       } else if (error.response.data.includes("The password field must be at least 6 characters.")) {
