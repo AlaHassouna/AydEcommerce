@@ -36,7 +36,7 @@ const Products = ({mockCategories}) => {
   // const [selectSubcategory, setSelectSubcategory] = useState([]); // Sous-catégories sélectionnées
   
   // Récupère le nom de la catégorie depuis l'état passé dans le lien
-  // const { categoryName } = location.state || {};  
+  const { categoryName } = location.state || {};  
   // const { subCategoryName } = location.state || {};  
   // État pour les catégories sélectionnées
 
@@ -106,14 +106,12 @@ const Products = ({mockCategories}) => {
 
 // Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
 
-// useEffect(() => {
-//   if (categoryName && !selectedCategories.includes(categoryName)) {
-//     setSelectedCategories((prevCategories) => [...prevCategories, categoryName]);
-//   }
-//   console.log("selectedCategorikkkkkkkkkkkkkkkes",selectedCategories)
-//   console.log("categoryName",categoryName)
+useEffect(() => {
+  if (categoryName) {
+    setSelectedCategories([categoryName]); // Remplace la liste par categoryName uniquement
+  }
+}, [categoryName]);
 
-// }, [categoryName]);
 // Effectue l'ajout de categoryName à selectedCategories si categoryName n'est pas vide
 
 
@@ -1126,6 +1124,9 @@ const handleSelection = (option) => {
       </div>
     </div>
     <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+
+
+      
       {filteredProducts.length>0? (
         filteredProducts.map((product) => (
           <Link to={`/product/${product.UID}`} state={{ product }}>

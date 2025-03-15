@@ -120,13 +120,14 @@ const Checkout = () => {
                 ...prevOrder,
                 gouvernorat: selectedGouvernorat,
             };
-            console.log(updatedOrder);  // Affiche l'ordre mis à jour dans la console
+            // console.log(updatedOrder);  // Affiche l'ordre mis à jour dans la console
             return updatedOrder;
         });
 
         let data = {};
         if (account) {
             data = {
+                nom:order.nom,
                 User_id: account.id,
                 Gouvernorat: selectedGouvernorat,
                 Delegation: order.delegation,
@@ -145,6 +146,8 @@ const Checkout = () => {
             };
         } else {
             data = {
+                nom:order.nom,
+
                 Gouvernorat: selectedGouvernorat,
                 Delegation: order.delegation,
                 Phone1: order.phone1,
@@ -161,14 +164,14 @@ const Checkout = () => {
                 status: "Confirmation",
             };
         }
-
         try {
             const response = await axios.post(`${API_URL}/order`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 }
             });
-    
+            console.log("data",data)
+            
             // Si valide, ferme le modal
             closeModal();
             // Logique pour soumettre la commande, par exemple :

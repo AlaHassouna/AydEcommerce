@@ -366,7 +366,7 @@ const [mockCategories, setMockCategories] = useState([]); // État pour stocker 
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/>
             </svg>
           </Link>
-          <ul className="w-max max-w-full border-2 border-[#011d28] absolute left-full top-0 hidden group-hover:block bg-white dark:bg-gray-700 shadow-lg rounded-lg overflow-x-auto">
+          {/* <ul className="w-max max-w-full border-2 border-[#011d28] absolute left-full top-0 hidden group-hover:block bg-white dark:bg-gray-700 shadow-lg rounded-lg overflow-x-auto">
             {category.subCategorie.map((subcategory, subIndex) => (
               <li key={subIndex}>
                 <Link
@@ -380,7 +380,7 @@ const [mockCategories, setMockCategories] = useState([]); // État pour stocker 
                 </Link>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
       ) : (
         // Afficher une catégorie sans sous-catégories
