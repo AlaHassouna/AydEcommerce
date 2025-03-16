@@ -1346,16 +1346,16 @@ useEffect(() => {
       <div className="grid grid-cols-1 md:grid-cols-1  lg:grid-cols-4 gap-0 lg:gap-4 mb-4 ">
           {/* Image Section */}
           
-          <div className="flex justify-center items-center rounded-lg dark:border-gray-600 h-[300px] lg:h-full w-full">
+          {/* <div className="flex justify-center items-center rounded-lg dark:border-gray-600 h-[300px] lg:h-full w-full">
           <img
             src="https://images.pexels.com/photos/1721558/pexels-photo-1721558.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             className="rounded-lg h-full w-full object-cover shadow-xl z-10"
             alt=""
           />
-        </div>
+        </div> */}
             
           {/* Content Section */}
-          <div className="rounded-lg col-span-3 h-full ">
+          <div className="rounded-lg col-span-4 h-full ">
             {/* Header Section */}
             <div className="flex justify-between items-center mb-4 md:mt-4 flex-wrap">
               <div>
@@ -1363,7 +1363,7 @@ useEffect(() => {
                   Meilleures ventes
                 </h1>
                 <p className="mt-[-4px] text-xs sm:text-sm lg:text-base font-normal text-gray-500 dark:text-gray-300">
-                  Ne manquez pas l'offre actuelle jusqu'à la fin de janvier.
+                Les articles les plus populaires du moment !
                 </p>
               </div>
 
@@ -1394,7 +1394,7 @@ useEffect(() => {
 
             {/* Best Sellers Component */}
             {bestSellers.length>3?
-            <BestSellers nbslidesToShow={3} products={bestSellers}/>:
+            <BestSellers nbslidesToShow={5} products={bestSellers}/>:
 
             <BestSellers nbslidesToShow={1} products={bestSellers}/>}
           </div>

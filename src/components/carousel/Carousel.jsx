@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import c0 from '../../assets/images/c0.webp';
-import c1 from '../../assets/images/c1.png';
-import c2 from '../../assets/images/c2.png';
+import c1 from '../../assets/images/c1.webp';
+import c2 from '../../assets/images/c2.webp';
 
 
 const Carousel = () => {
